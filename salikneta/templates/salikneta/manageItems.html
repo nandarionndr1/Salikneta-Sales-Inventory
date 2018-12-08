@@ -14,13 +14,198 @@
         <div class="row">
           <div class="col-lg-9 main-chart">
             <!--CUSTOM CHART START -->
-	            <div class="border-head">
-	              <h1>ITEMS</h1>
-	            </div>
-	            </div>
-       		 </div>
-		    </section>
-		</section>
-	</section>
+              <div class="border-head">
+                <h1>ITEMS</h1>
+              </div>
+
+
+
+
+
+              <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
+                Add items
+                </button>
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">ADD NEW ITEM</h4>
+                    </div>
+                    <div class="modal-body">
+
+                  <div class="login-wrap">
+                          <div class="row">
+                           <div class="col-md-6">
+
+                              <label class="control-label">Name</label>
+                             <input type="text" class="form-control" id="itemName" name="itemName" placeholder="Item name" autofocus>
+                           </div>
+                           <div class= "col-md-6">
+
+
+                              <label class="control-label">Category</label>
+                              <select  class="form-control" id="category">
+                                {% for category in categories %}
+                                  <option value="{{category.pk}}">{{category.name}}</option>
+                                {% endfor %}
+                              </select>
+                           </div>
+                         </div>
+                         <br>
+                         <div class="row">
+                           <div class="col-md-6">
+                              <label class="control-label">Price</label>
+                          <input type="email" class="form-control" id="price" name="price" placeholder="Suggested unit price" autofocus>
+                           </div>
+                           <div class= "col-md-6">
+
+                              <label class="control-label">SKU</label>
+                          <input type="text" class="form-control" id="SKU" name="SKU" placeholder="Store Keeping Unit" autofocus>
+                           </div>
+                           <br>
+                         </div>
+                         <br>
+                          <div class="row">
+                           <div class="col-md-6">
+
+                              <label class="control-label">Re-order level</label>
+                          <input type="text" class="form-control" id="reorder" name="reorder" placeholder="Re-order level" autofocus>
+                           </div> 
+                           <div class="col-md-6">
+
+                              <label class="control-label">Units of measure</label>
+                          <input type="text" class="form-control" id="unitsOfMeasure" name="unitsOfMeasure" placeholder="Units of measure" autofocus>
+                           </div>
+                           
+                         </div>
+                         <br>
+                         <div class = "row">
+                            <div class="col-md-8">
+                              <label class="control-label">Description</label>
+                             <textarea type="text" class="form-control" id="description" name="description" placeholder="Item description" autofocus></textarea>
+                       
+                            </div>
+                              
+                         </div>
+
+                        
+                          
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" onclick="addItem()" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+    <section id="main-content">
+      <section class="wrapper">
+
+        <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+
+              <section id="unseen">
+                <table class="table table-bordered table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Suggested Price</th>
+                      <th>SKU</th>
+                      <th>Re-order level</th>
+                    </tr>
+                  </thead>
+                  <tbody id ="itemsBody">
+                    {% for product in products %}
+                      <tr>
+                        <td>{{product.name}}</td>
+                        <td>{{product.idCategory.name}}</td>
+                        <td>{{product.suggestedUnitPrice}}</td>
+                        <td>{{product.SKU}}</td>
+                        <td>{{product.reorderLevel}}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </section>
+            </div>
+            <!-- /content-panel -->
+          </div>
+          <!-- /col-lg-4 -->
+        </div>
+
+
+
+
+        </section>
+    </section>
+  </section>
 </body>
+<script>
+    function addItem(){
+      var itemName = $("#itemName").val();
+      var category = $("#category").val();
+      var price = $("#price").val();
+      var SKU = $("#SKU").val();
+      var reorder = $("#reorder").val();
+      var unitsOfMeasure = $("#unitsOfMeasure").val();
+      var description = $("#description").val();
+
+
+      if(itemName != "" && category != "" &&price != "" && SKU != "" &&reorder != "" && unitsOfMeasure != "" &&description != ""){
+        
+        alert("Nice");  
+        $.ajax({
+          url: '{% url "ajaxAddItem" %}',
+          data: {
+            "itemName":itemName,
+            "category":category,
+            "price":price,
+            "SKU":SKU,
+            "reorder":reorder,
+            "unitsOfMeasure":unitsOfMeasure,
+            "description":description,
+
+          },
+          dataType: 'json',
+          success: function(data){  
+            
+          }
+          
+       });
+        var cat = $("#category option:selected").text();
+        wew = "<tr><td>" + itemName + "</td><td>" + cat + "</td><td>" + price + "</td><td>" + SKU +"</td><td>"+ reorder + "</td></tr>";
+        $("#itemsBody").append(wew);
+       //  $.ajax({
+       //    url: '{% url "ajaxGetUpdatedItems" %}',
+       //    data: {
+
+
+       //    },
+       //    dataType: 'json',
+       //    success: function(data){  
+       //      console.log(data);
+       //      wew = "";
+       //      for(var i = 0; i < data.length; i++){
+       //        wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].category + "</td><td>" + data[i].price + "</td><td>" + data[i].SKU +", "+ data[i].reorder + "</td></tr>";
+       //      }
+       //      $("#itemsBody").html(wew);
+       //    }
+          
+       // });
+      }
+
+
+    }
+</script>
             <!--custom chart end-->

@@ -97,7 +97,14 @@ def manageSuppliers(request):
     return render(request, 'salikneta/manageSuppliers.html',context)
 
 def manageItems(request):
-    return render(request, 'salikneta/manageItems.html')
+    c = Category.objects.all()
+    i = Product.objects.all()
+
+    context = {
+        "categories":c,
+        "products":i,
+    }
+    return render(request, 'salikneta/manageItems.html',context)
 
 def ajaxAddCategory(request):
     print("AW")
@@ -105,6 +112,21 @@ def ajaxAddCategory(request):
     desc = request.GET.get('description')
     print("WEW")
     c = Category(name=name,description=desc)
+    c.save()
+
+    return HttpResponse()
+
+def ajaxAddItem(request):
+    print("AW")
+    itemName = request.GET.get('itemName')
+    category = request.GET.get('category')
+    price = request.GET.get('price')
+    SKU = request.GET.get('SKU')
+    reorder = request.GET.get('reorder')
+    unitsOfMeasure = request.GET.get('unitsOfMeasure')
+    description = request.GET.get('description')
+    print("WEW")
+    c = Product(name=itemName,description=description, suggestedUnitPrice=price, unitsInStock=0, reorderLevel=reorder,unitOfMeasure=unitsOfMeasure,SKU=SKU,idCategory_id = category)
     c.save()
 
     return HttpResponse()
@@ -148,3 +170,15 @@ def ajaxGetUpdatedSuppliers(request):
 
 
     return JsonResponse(suppliers, safe=False)
+
+def ajaxGetUpdatedItems(request):
+    print("Waa2aaaE")
+    c = Product.objects.all()
+    products = []
+    for x in range(0, len(c)):
+        products.append({"name":c[x].name,"category":c[x].idCategory.name,"price":c[x].suggestedUnitPrice,"SKU":c[x].SKU,"reorder":c[x].reorderLevel})
+        
+
+
+
+    return JsonResponse(products, safe=False)
