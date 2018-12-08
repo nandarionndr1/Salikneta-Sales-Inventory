@@ -23,6 +23,7 @@ def log_in_validate(request):
             request.session['username'] = user
             request.session['usertype'] = "cashier"
             request.session['logged'] = True
+            request.session['userID'] = True
             return render(request, 'salikneta/home.html')
         elif try2: 
             request.session['username'] = user
@@ -40,6 +41,22 @@ def pos(request):
     return render(request, 'salikneta/pos/pos.html')
 def signout(request):
     return redirect('index')
+def purchaseOrder(request):
+    s = Supplier.objects.all()
+    usertype = request.session['usertype']
+    if usertype == "manager":
+        m = Manager.objects.filter(username=request.session['username']).select_related("idBranch")
+        branch = m[0].idBranch.name
+    if usertype == "cashier":
+        m = Cashier.objects.filter(username=request.session['username']).select_related("idBranch")
+        branch = m[0].idBranch.name
+
+
+    context = {
+        "suppliers":s,"branch":branch,
+    }
+    return render(request, 'salikneta/purchaseOrder.html',context)
+
 def register(request):
     branches = Branch.objects.all()
     context = {

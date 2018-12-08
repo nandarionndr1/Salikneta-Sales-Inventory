@@ -1,0 +1,117 @@
+
+{% load staticfiles %}
+{% include 'salikneta/includes/head.html' %}
+<body>
+  <section id="container">
+
+  <style>
+.datepicker{z-index:1151 !important;}
+</style>
+
+{% include 'salikneta/includes/header.html' %}
+ <!-- **********************************************************************************************************************************************************
+        MAIN CONTENT
+        *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper">
+        <div class="row">
+          <div class="col-lg-9 main-chart">
+            <!--CUSTOM CHART START -->
+              <div class="border-head">
+                <h1>Purchase Order</h1>
+              </div>
+
+
+
+
+              <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
+                Add purchase order
+                </button>
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">ADD NEW SUPPLIER</h4>
+                    </div>
+                    <div class="modal-body">
+
+                  <div class="login-wrap">
+                          <div class="row">
+                              <div class="col-md-6">
+                                <label>Supplier</label>
+                                <select class="form-control" id="supplier">
+                                  {% for supplier in suppliers %}
+                                    <option value="{{supplier.pk}}">{{supplier.name}}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
+
+                              <div class="col-md-6">
+                                <label>Ship to</label>
+                                <select class="form-control" id="shipTo">
+                                  <option>{{branch}}</option>
+                                    
+                                </select>
+                              </div>
+                          </div>
+                          <br>
+
+                          <div class="row">
+                            <div class="col-md-6">
+                              
+                                <label>Purchase order date</label>
+                                 <div class="form-group">
+
+                                  <div class="col-md-9 col-xs-11">
+                                    <div data-date-viewmode="years" data-date-format="dd-mm-yyyy" data-date="01-01-2014" class="input-append date dpYears">
+                                      <input type="text" id="orderDate" readonly="" value="01-01-2014" size="16" class="form-control">
+                                      <span class="input-group-btn add-on">
+                                        <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <label>Expected on</label>
+                                 <div class="form-group">
+
+                                  <div class="col-md-9 col-xs-11">
+                                    <div data-date-viewmode="years" data-date-format="dd-mm-yyyy" data-date="01-01-2014" class="input-append date dpYears">
+                                      <input type="text" id="expectedDate" readonly="" value="01-01-2014" size="16" class="form-control">
+                                      <span class="input-group-btn add-on">
+                                        <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                  </div>
+                                </div>
+s
+
+                            </div>
+
+                           
+                          </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" onclick="addSupplier()" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+  </section>
+</body>
+<script>
+</script>
+            <!--custom chart end-->
