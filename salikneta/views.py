@@ -10,7 +10,7 @@ def index(request):
     return render(request,'salikneta/login.html')
 def log_in(request):
     return render(request, 'salikneta/login.html')
-def verify(request):
+def log_in_validate(request):
     user = None
     try:
         #fix logging dogging.
@@ -33,6 +33,8 @@ def home(request):
 def signout(request):
     return redirect('index')
 def register(request):
+    return render(request, 'salikneta/register.html')
+def register_validate(request):
     if request.method == 'POST':
         username = request.POST.get('user')
         password = request.POST.get('password')
