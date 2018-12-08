@@ -5,7 +5,8 @@
       *********************************************************************************************************************************************************** -->
   <div id="login-page">
     <div class="container">
-      <form class="form-login" action="{% url 'verify' %}">
+      <form class="form-login" method="post" action="{% url 'verify' %}">
+          {% csrf_token %}
           <h2 class="form-login-heading">Salikneta POSIS <p class="text-muted" style="font-size: 14px">Sales and Inventory System</p></h2>
         <div class="login-wrap">
           <input type="text" class="form-control" name="user" placeholder="Username / Email" autofocus>

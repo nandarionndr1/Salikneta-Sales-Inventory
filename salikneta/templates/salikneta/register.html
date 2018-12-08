@@ -13,8 +13,10 @@
       *********************************************************************************************************************************************************** -->
   <div id="login-page">
     <div class="container">
-      <form class="form-login" action="{% url 'register_validate' %}">
+      <form class="form-login" method="post" action="{% url 'register_validate' %}">
+        {% csrf_token %}
           <center><h4 class="mb"><i class="fa fa-angle-right"></i> Register User</h4></center>
+        }
         <div class="login-wrap">
                   <label class="control-label">First Name</label>
                     <input type="text" class="form-control" name="fname" required>
@@ -26,10 +28,18 @@
                       <option value="manager">Manager</option>
                   </select>
                   <label class="control-label">Email</label>
-                    <input name="user" type="password" class="form-control" required>
+                    <input name="user" type="email" class="form-control" required>
                        <span class="help-block">This will be the user's username.</span>
                   <label class="control-label">Password</label>
                     <input type="password" name="password" class="form-control"  required>
+
+                  <label class="control-label">Branch</label>
+                    <select name="branch" class="form-control">
+                      {% for branch in branches %}
+
+                        <option value="{{branch.pk}}">{{branch.name}}</option>
+                      {% endfor %}
+                  </select>
             <br>
           <button class="btn btn-theme btn-block" href="index.html" type="submit"><i class="fa fa-lock"></i> SIGN UP</button>
         </div>
