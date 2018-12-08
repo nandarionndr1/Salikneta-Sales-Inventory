@@ -117,24 +117,29 @@
           }
           
        });
-        $.ajax({
-          url: '{% url "ajaxGetUpdatedCategories" %}',
-          data: {
+        wew = "<tr><td>" + categoryName + "</td><td>" + description + "</td></tr>";
+
+        $("#categoryBody").append(wew); 
+        $("#categoryName").val("");
+        $("#description").val("");
+       //  $.ajax({
+       //    url: '{% url "ajaxGetUpdatedCategories" %}',
+       //    data: {
 
 
-          },
-          dataType: 'json',
-          success: function(data){  
-            console.log(data);
-            wew = "";
-            for(var i = 0; i < data.length; i++){
+       //    },
+       //    dataType: 'json',
+       //    success: function(data){  
+       //      console.log(data);
+       //      wew = "";
+       //      for(var i = 0; i < data.length; i++){
 
-              wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].description + "</td></tr>";
-            }
-            $("#categoryBody").html(wew);
-          }
+       //        wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].description + "</td></tr>";
+       //      }
+       //      $("#categoryBody").html(wew);
+       //    }
           
-       });
+       // });
       }
 
 
