@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-
+import datetime
 from django.http import HttpResponse, Http404,JsonResponse, HttpResponseRedirect
 from salikneta.models import *
 from django.urls import reverse
@@ -39,7 +39,10 @@ def home(request):
     return render(request, 'salikneta/home.html')
 
 def pos(request):
-    return render(request, 'salikneta/pos/pos.html')
+    return render(request, 'salikneta/pos/pos.html',{'products': Product.objects.all(),
+                                                     'si_num':SalesInvoice.get_latest_invoice_num(),
+                                                     'date':datetime.datetime.now(),
+                                                     'categories':Category.objects.all()})
 def signout(request):
     return redirect('index')
 def purchaseOrder(request):

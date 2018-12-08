@@ -7,6 +7,16 @@
     .selectable{
         cursor: pointer;
     }
+    .row.no-gutter {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.row.no-gutter [class*='col-']:not(:first-child),
+.row.no-gutter [class*='col-']:not(:last-child) {
+  padding-right: 0;
+  padding-left: 0;
+}
 </style>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <body>
@@ -16,23 +26,31 @@
       <section class="wrapper site-min-height">
         <div class="row">
           <div class="col-lg-12">
-            <div class="col-lg-5">
+            <div class="col-lg-6">
               <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
                   <div class="row text-left" style="background-color: #03DAC6;padding: 10px">
-                  <h4 style="margin: 0;padding: 0; color: black">Sales Invoice 10000</h4>
+                      <div class="col-md-6 text-left">
+                        <h4 style="margin: 0;padding: 0; color: black">Sales Invoice {{ si_num }}</h4>
+                      </div>
+                      <div class="col-md-6 text-right">
+                        <h6 style="margin: 0;padding: 0;">{{ date|date:"M d, Y" }}</h6>
+                      </div>
                   </div>
                   <div class="row">
                         <table class="table table-hover">
                         <thead>
                           <tr>
-                            <th style="text-align: left; width:50%" >Item</th>
-                            <th style="text-align: right; width:12.5%">Quantity</th>
-                            <th style="text-align: right; width:12.5%">Discount</th>
-                            <th style="text-align: right; width:25%">Rate</th>
+                            <th style="text-align: left; width:18%" >Item Code</th>
+                            <th style="text-align: left; width:37%" >Item Name</th>
+                            <th style="text-align: right; width:12.5%">Qty</th>
+                            <th style="text-align: right; width:12.5%">Disc(%)</th>
+                            <th style="text-align: right; width:20%">Rate</th>
                           </tr>
                         </thead>
                         <tbody>
+                        <!--
                         <tr>
+                            <td style="text-align: left">100</td>
                             <td style="text-align: left">Rubber Dildo</td>
                             <td style="text-align: right">
                                 <input type="text" class="form-control input-sm"  value="3"/>
@@ -41,27 +59,8 @@
                                 <input type="text" class="form-control input-sm"  value="3"/>
                             </td>
                             <td style="text-align: right"><b>P 75.00</b><br><p class="text-muted">(25.0)</p></td>
-                          </tr>
-                        <tr>
-                            <td style="text-align: left">Rubber Dildo</td>
-                            <td style="text-align: right">
-                                <input type="text" class="form-control input-sm"  value="3"/>
-                            </td>
-                              <td style="text-align: right">
-                                <input type="text" class="form-control input-sm"  value="3"/>
-                            </td>
-                            <td style="text-align: right"><b>P 75.00</b><br><p class="text-muted">(25.0)</p></td>
-                          </tr>
-                        <tr>
-                            <td style="text-align: left">Rubber Dildo</td>
-                            <td style="text-align: right">
-                                <input type="text" class="form-control input-sm"  value="3"/>
-                            </td>
-                              <td style="text-align: right">
-                                <input type="text" class="form-control input-sm"  value="3"/>
-                            </td>
-                            <td style="text-align: right"><b>P 75.00</b><br><p class="text-muted">(25.0)</p></td>
-                          </tr>
+                        </tr>
+                        -->
                         </tbody>
                       </table>
                       <hr>
@@ -70,41 +69,62 @@
                               <b>Net Total</b>
                           </div>
                           <div class="col-md-6 text-right">
-                              <b>P 669.0</b>
+                              P<b id="net_total"> 0.0</b>
                           </div>
                       </div>
                     </div>
               <div>
-                <a class="btn btn-theme" href="#">Pay</a>
-                <a class="btn btn-theme" href="#">Cancel</a>
+                <a class="btn btn-success" href="#"><i class="fa fa-check"></i> Pay</a>
+                  <a class="btn btn-default" href="#"><i class="fa fa-refresh"></i> Clear</a>
               </div>
               </div>
             </div>
               <!-- end custombox -->
             <!-- end col-4 -->
-            <div class="col-lg-7">
-                  <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
-                  <div class="row text-left" style="padding: 10px;padding-bottom: 0px">
-                  <input type="text" class="form-control input-sm" placeholder="Search Item"/>
-                  </div>
-                  <div class="row" style="padding-top: 0; max-height: 100vh;overflow-y: scroll;margin-top: 0px;">
-                      <hr style="border-color: silver">
+            <div class="col-lg-6">
+              <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
+              <div class="row no-gutter" style="padding: 10px;padding-bottom: 0px">
+                  <div class="col-md-9" style="margin: 0px">
 
-              <div class="col-md-3 mb selectable"
-                   product_name="Repolyo"
-                   curr_stock="10"
-                   unitMeasure="PCS"
-                   SKU="300G"
-                   product_price="50.0">
-                <div class="w3-card-4" style="width:100%">
-                    <img src="{% static 'media/cabbage.jpeg' %}" style="width:100%;height: 180px">
-                    <div class="w3-container" style="text-align: left">
-                      <b style="color: black; font-size: 12px">Repolyo 300G</b>
-                      <p style="font-size: 10px" class="text-muted">P123.00 per KG</p>
-                    </div>
-                </div>
+              <input type="text" class="form-control input-sm" id="item_filter" placeholder="Search Item"/>
+                  </div>
+                  <div class="col-md-3">
+                      <select class="form-control input-sm" id="cat_filter">
+                          <option value="null" selected>No Category Filter</option>
+                          {% for cat in categories %}
+                            <option value="{{ cat.name }}">{{ cat.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
               </div>
-              <div class="col-md-3 selectable"
+              <div class="row " id="item_container" style="padding-top: 0; max-height: 100vh;overflow-y: scroll;margin-top: 0px;">
+                  <hr style="border-color: silver">
+            {% for p in products %}
+                  <div class="col-md-4 mb selectable"
+                       product_name="{{ p.name }}"
+                       curr_stock="{{ p.unitsInStock }}"
+                       category="{{ p.idCategory.name }}"
+                       unitMeasure="{{ p.unitOfMeasure }}"
+                       SKU="{{ p.SKU }}"
+                       product_price="{{ p.suggestedUnitPrice }}">
+                    <div class="w3-card-4" style="width:100%">
+                        <img src="/static/media/{{ p.img_path }}" style="width:100%;height: 180px">
+                        <div class="w3-container" style="text-align: left">
+                          <b style="color: black; font-size: 12px">{{ p.name }}</b>
+                            <div>
+                          <b style="float:right;font-size: 10px" class="text-muted">{{ p.idCategory.name }}</b>
+                          <p style="float:left;font-size: 10px" class="text-muted">P{{ p.suggestedUnitPrice }}/{{ p.unitOfMeasure }}</p>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            {% endfor %}
+              </div>
+              <div>
+              </div>
+              </div>
+              <!--
+              <div class="col-md-4 selectable"
                    product_name="Malunggay"
                    curr_stock="15"
                    unitMeasure="KG"
@@ -113,16 +133,12 @@
                 <div class="w3-card-4" style="width:100%;">
                     <img src="{% static 'media/malunggay.jpeg' %}" style="width:100%;height: 180px">
                     <div class="w3-container" style="text-align: left">
-                      <b style="color: black; font-size: 12px">Malungay 300G</b>
-                      <p style="font-size: 10px" class="text-muted">P123.00 per KG</p>
+                      <b style="color: black; font-size: 12px">Malungay</b>
+                      <p style="font-size: 10px" class="text-muted">P123.00 / KG</p>
                     </div>
                 </div>
               </div>
-                  </div>
-              <div>
-              </div>
-              </div>
-              <!-- end custombox -->
+              end custombox -->
             </div>
             <!-- end col-4 -->
           </div>
@@ -139,4 +155,28 @@
     $( ".selectable" ).click(function() {
       alert($( this ).attr("product_name"));
     });
+    $(document).ready(function(){
+      $("#item_filter").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        var filter_value = $("#cat_filter").find(":selected").text().toLowerCase();
+        $("#item_container .selectable").filter(function() {
+           if(filter_value !== "no category filter"){
+                $(this).toggle($(this).attr("category").toLowerCase() === value);
+           }
+
+           $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+      });
+      $("#cat_filter").on("change", function() {
+        var value = $(this).find(":selected").text().toLowerCase();
+        $("#item_container .selectable").filter(function() {
+           if(value !== "no category filter"){
+                $(this).toggle($(this).attr("category").toLowerCase() === value);
+           }else{
+                $(this).toggle($(this).attr("category").toLowerCase() !== value);
+           }
+        });
+      });
+    });
+
 </script>
