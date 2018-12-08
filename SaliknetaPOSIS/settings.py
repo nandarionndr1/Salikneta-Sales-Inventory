@@ -121,7 +121,6 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATICFILES_DIRS = ('/Users/Leebet-PC/PycharmProjects/SaliknetaPOSIS/salikneta/static',)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'salikneta/static/media')
