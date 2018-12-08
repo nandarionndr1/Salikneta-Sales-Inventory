@@ -17,7 +17,14 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
+from . import views
+
 urlpatterns = [
+    path('', views.index, name='index'),
+    path('home/', views.home, name='home'),
+    path('signout', views.signout, name='signout'),
+    path('log_in/', views.log_in, name='log_in'),
+    path('verify/', views.verify, name='verify'),
 ]
 
 
