@@ -126,7 +126,7 @@ def ajaxAddItem(request):
     unitsOfMeasure = request.GET.get('unitsOfMeasure')
     description = request.GET.get('description')
     print("WEW")
-    c = Product(name=itemName,description=description, suggestedUnitPrice=price, unitsInStock=0, reorderLevel=reorder,unitOfMeasure=unitsOfMeasure,SKU=SKU,idCategory_id = category)
+    c = Product(name=itemName,description=description, suggestedUnitPrice=price, unitsInStock=0,img_path=request.FILES['image'], reorderLevel=reorder,unitOfMeasure=unitsOfMeasure,SKU=SKU,idCategory_id = category)
     c.save()
 
     return HttpResponse()

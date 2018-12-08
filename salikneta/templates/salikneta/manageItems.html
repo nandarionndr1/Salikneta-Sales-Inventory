@@ -81,8 +81,25 @@
                            
                          </div>
                          <br>
+                        <div class="row">
+                            <div class="col-md-10">
+
+                <div class="form-group">
+                    <div class="fileupload fileupload-new" data-provides="fileupload">
+                      <span class="btn btn-theme02 btn-file">
+                      <input type="file" class="default" id="image" name="image" />
+                      </span>
+                      <span class="fileupload-preview" style="margin-left:5px;"></span>
+                      <a href="advanced_form_components.html#" class="close fileupload-exists" data-dismiss="fileupload" style="float: none; margin-left:5px;"></a>
+                    </div>
+                </div>
+                            </div>
+                        </div>
+
+                        <br>
                          <div class = "row">
                             <div class="col-md-8">
+
                               <label class="control-label">Description</label>
                              <textarea type="text" class="form-control" id="description" name="description" placeholder="Item description" autofocus></textarea>
                        
@@ -172,6 +189,7 @@
             "category":category,
             "price":price,
             "SKU":SKU,
+            "image":$("#image").val(),
             "reorder":reorder,
             "unitsOfMeasure":unitsOfMeasure,
             "description":description,
