@@ -27,6 +27,7 @@ urlpatterns = [
     path('verify/', views.log_in_validate, name='verify'),
     path('register/', views.register, name='register'),
     path('register_validate/', views.register_validate, name='register_validate'),
+    path('pos/', views.pos, name='pos'),
 ]
 
 

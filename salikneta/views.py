@@ -34,6 +34,9 @@ def log_in_validate(request):
     return render(request, 'salikneta/login.html')
 def home(request):
     return render(request, 'salikneta/home.html')
+
+def pos(request):
+    return render(request, 'salikneta/pos/pos.html')
 def signout(request):
     return redirect('index')
 def register(request):
