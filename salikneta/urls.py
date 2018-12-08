@@ -31,7 +31,14 @@ urlpatterns = [
     path('manageSuppliers/', views.manageSuppliers, name='manageSuppliers'),
     path('manageItems/', views.manageItems, name='manageItems'),
     path('pos/', views.pos, name='pos'),
+    path('ajax/ajaxAddCategory/', views.ajaxAddCategory, name='ajaxAddCategory'),
+    path('ajax/ajaxGetUpdatedCategories/', views.ajaxGetUpdatedCategories, name='ajaxGetUpdatedCategories'),
+    path('ajax/ajaxAddSupplier/', views.ajaxAddSupplier, name='ajaxAddSupplier'),
+    path('ajax/ajaxGetUpdatedSuppliers/', views.ajaxGetUpdatedSuppliers, name='ajaxGetUpdatedSuppliers'),
+
 ]
+
+
 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
