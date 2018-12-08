@@ -162,8 +162,8 @@
       var province = $("#province").val();
       var country = $("#country").val();
       var postal = $("#postal").val();
-
-      if(supplierName != "" && contactNumber != "" &&emailAddress != "" && website != "" &&address1 != "" && address2 != "" &&city != "" && province != "" && country != "" && postal != ""){
+      
+      if(supplierName != "" && contactNumber != "" &&emailAddress != "" && website != "" &&address1 != "" &&city != "" && province != "" && country != "" && postal != ""){
         
         alert("Nice");  
         $.ajax({
@@ -186,23 +186,26 @@
           }
           
        });
-        $.ajax({
-          url: '{% url "ajaxGetUpdatedSuppliers" %}',
-          data: {
+        wew = "<tr><td>" + supplierName + "</td><td>" + contactNumber + "</td><td>" + emailAddress + "</td><td>" + address1 +", "+ city + ", " + country + "</td></tr>";
+
+            $("#supplierBody").append(wew);
+       //  $.ajax({
+       //    url: '{% url "ajaxGetUpdatedSuppliers" %}',
+       //    data: {
 
 
-          },
-          dataType: 'json',
-          success: function(data){  
-            console.log(data);
-            wew = "";
-            for(var i = 0; i < data.length; i++){
-              wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].contactNumber + "</td><td>" + data[i].emailAddress + "</td><td>" + data[i].address1 +", "+ data[i].city + ", " + data[i].country + "</td></tr>";
-            }
-            $("#supplierBody").html(wew);
-          }
+       //    },
+       //    dataType: 'json',
+       //    success: function(data){  
+       //      console.log(data);
+       //      wew = "";
+       //      for(var i = 0; i < data.length; i++){
+       //        wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].contactNumber + "</td><td>" + data[i].emailAddress + "</td><td>" + data[i].address1 +", "+ data[i].city + ", " + data[i].country + "</td></tr>";
+       //      }
+       //      $("#supplierBody").html(wew);
+       //    }
           
-       });
+       // });
       }
 
 
