@@ -27,6 +27,9 @@ urlpatterns = [
     path('verify/', views.log_in_validate, name='verify'),
     path('register/', views.register, name='register'),
     path('register_validate/', views.register_validate, name='register_validate'),
+    path('manageCategories/', views.manageCategories, name='manageCategories'),
+    path('manageSuppliers/', views.manageSuppliers, name='manageSuppliers'),
+    path('manageItems/', views.manageItems, name='manageItems'),
 ]
 
 

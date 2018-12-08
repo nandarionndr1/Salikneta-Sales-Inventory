@@ -76,3 +76,12 @@ def register_validate(request):
         messages.warning(request, 'Account Created.')
         return render(request, 'salikneta/login.html')
     return render(request, 'salikneta/register.html')
+
+def manageCategories(request):
+    return render(request, 'salikneta/manageCategories.html')
+
+def manageSuppliers(request):
+    return render(request, 'salikneta/manageSuppliers.html')
+
+def manageItems(request):
+    return render(request, 'salikneta/manageItems.html')
