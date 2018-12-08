@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
 
-from django.http import HttpResponse, Http404,JsonResponse
-from salikneta.models import * 
+from django.http import HttpResponse, Http404,JsonResponse, HttpResponseRedirect
+from salikneta.models import *
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User,Group
@@ -104,6 +105,13 @@ def manageItems(request):
         "categories":c,
         "products":i,
     }
+    if request.method == 'POST':
+        c = Product(name=request.POST['itemName'], description=request.POST['description'],
+                    suggestedUnitPrice=request.POST['price'], unitsInStock=request.POST['startStock'],
+                    img_path=request.FILES['image'], reorderLevel=request.POST['reorder'], unitOfMeasure=request.POST['unitsOfMeasure'],
+                    SKU=request.POST['SKU'],idCategory_id=request.POST['category'])
+        c.save()
+        return HttpResponseRedirect(reverse('manageItems'))
     return render(request, 'salikneta/manageItems.html',context)
 
 def ajaxAddCategory(request):
