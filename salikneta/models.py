@@ -50,7 +50,7 @@ class Product(models.Model):
 	unitOfMeasure = models.CharField(max_length=45)
 	SKU = models.IntegerField()
 	barcode = models.CharField(max_length=45)
-	img_path = models.ImageField()
+	img_path = models.ImageField(upload_to="prod_img/")
 	idCategory = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 class PurchaseOrder(models.Model):
