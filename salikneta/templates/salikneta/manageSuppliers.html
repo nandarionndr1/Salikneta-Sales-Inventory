@@ -14,13 +14,198 @@
         <div class="row">
           <div class="col-lg-9 main-chart">
             <!--CUSTOM CHART START -->
-	            <div class="border-head">
-	              <h1>SUPPLIERS</h1>
-	            </div>
-	            </div>
-       		 </div>
-		    </section>
-		</section>
-	</section>
+              <div class="border-head">
+                <h1>SUPPLIERS</h1>
+              </div>
+
+
+
+
+
+              <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
+                Add supplier
+                </button>
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">ADD NEW SUPPLIER</h4>
+                    </div>
+                    <div class="modal-body">
+
+                  <div class="login-wrap">
+                          <div class="row">
+                           <div class="col-md-6">
+
+                              <label class="control-label">Supplier name</label>
+                             <input type="text" class="form-control" id="supplierName" name="supplierName" placeholder="Supplier name" autofocus>
+                           </div>
+                           <div class= "col-md-6">
+
+                              <label class="control-label">Contact number</label>
+                            <input type="text" class="form-control" id="contactNumber" name="contactNumber" placeholder="Contact number" autofocus>
+                           </div>
+                         </div>
+                         <br>
+                         <div class="row">
+                           <div class="col-md-6">
+                              <label class="control-label">Email address</label>
+                          <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="Email address" autofocus>
+                           </div>
+                           <div class= "col-md-6">
+
+                              <label class="control-label">Website</label>
+                          <input type="text" class="form-control" id="website" name="website" placeholder="Website" autofocus>
+                           </div>
+                           <br>
+                         </div>
+                         <br>
+                              <label class="control-label">Address 1</label>
+                          <input type="text" class="form-control" id="address1" name="address1" placeholder="Address 1" autofocus>
+                          <br>
+                              <label class="control-label">Address 2</label>
+                          <input type="text" class="form-control" id="address2" name="address2" placeholder="Address 2" autofocus>
+                          <br>
+                          <div class="row">
+                           <div class="col-md-6">
+
+                              <label class="control-label">City</label>
+                          <input type="text" class="form-control" id="city" name="city" placeholder="City" autofocus>
+                           </div>
+                           <div class= "col-md-6">
+
+                              <label class="control-label">Province</label>
+                          <input type="text" class="form-control" id="province" name="province" placeholder="Province" autofocus>
+                           </div>
+                         </div>
+                          <div class="row">
+                           <div class="col-md-6">
+                              <label class="control-label">Country</label>
+                          <input type="text" class="form-control" id="country" name="country" placeholder="country" autofocus>
+                           </div>
+                           <div class= "col-md-6">
+
+                              <label class="control-label">Postal</label>
+                          <input type="text" class="form-control" id="postal" name="postal" placeholder="postal" autofocus>
+                           </div>
+                         </div>
+
+                          
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" onclick="addSupplier()" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+    <section id="main-content">
+      <section class="wrapper">
+
+        <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+
+              <section id="unseen">
+                <table class="table table-bordered table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Contact number</th>
+                      <th>Email address</th>
+                      <th>Address</th>
+                    </tr>
+                  </thead>
+                  <tbody id ="supplierBody">
+                    {% for supplier in suppliers %}
+                      <tr>
+                        <td>{{supplier.name}}</td>
+                        <td>{{supplier.contactNumber}}</td>
+                        <td>{{supplier.name}}</td>
+                        <td>{{supplier.address1}},{{supplier.city}},{{supplier.country}}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </section>
+            </div>
+            <!-- /content-panel -->
+          </div>
+          <!-- /col-lg-4 -->
+        </div>
+
+
+
+
+        </section>
+    </section>
+  </section>
 </body>
+<script>
+    function addSupplier(){
+      var supplierName = $("#supplierName").val();
+      var contactNumber = $("#contactNumber").val();
+      var emailAddress = $("#emailAddress").val();
+      var website = $("#website").val();
+      var address1 = $("#address1").val();
+      var address2 = $("#address2").val();
+      var city = $("#city").val();
+      var province = $("#province").val();
+      var country = $("#country").val();
+      var postal = $("#postal").val();
+
+      if(supplierName != "" && contactNumber != "" &&emailAddress != "" && website != "" &&address1 != "" && address2 != "" &&city != "" && province != "" && country != "" && postal != ""){
+        
+        alert("Nice");  
+        $.ajax({
+          url: '{% url "ajaxAddSupplier" %}',
+          data: {
+            "supplierName":supplierName,
+            "contactNumber":contactNumber,
+            "emailAddress":emailAddress,
+            "website":website,
+            "address1":address1,
+            "address2":address2,
+            "city":city,
+            "province":province,
+            "country":country,
+            "postal":postal,
+          },
+          dataType: 'json',
+          success: function(data){  
+            
+          }
+          
+       });
+        $.ajax({
+          url: '{% url "ajaxGetUpdatedSuppliers" %}',
+          data: {
+
+
+          },
+          dataType: 'json',
+          success: function(data){  
+            console.log(data);
+            wew = "";
+            for(var i = 0; i < data.length; i++){
+              wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].contactNumber + "</td><td>" + data[i].emailAddress + "</td><td>" + data[i].address1 +", "+ data[i].city + ", " + data[i].country + "</td></tr>";
+            }
+            $("#supplierBody").html(wew);
+          }
+          
+       });
+      }
+
+
+    }
+</script>
             <!--custom chart end-->

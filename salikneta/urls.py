@@ -27,14 +27,17 @@ urlpatterns = [
     path('verify/', views.log_in_validate, name='verify'),
     path('register/', views.register, name='register'),
     path('register_validate/', views.register_validate, name='register_validate'),
-<<<<<<< HEAD
     path('manageCategories/', views.manageCategories, name='manageCategories'),
     path('manageSuppliers/', views.manageSuppliers, name='manageSuppliers'),
     path('manageItems/', views.manageItems, name='manageItems'),
-=======
     path('pos/', views.pos, name='pos'),
->>>>>>> 297e8264ff7eb32362b0218d20d1c7fab56b8cdd
+    path('ajax/ajaxAddCategory/', views.ajaxAddCategory, name='ajaxAddCategory'),
+    path('ajax/ajaxGetUpdatedCategories/', views.ajaxGetUpdatedCategories, name='ajaxGetUpdatedCategories'),
+    path('ajax/ajaxAddSupplier/', views.ajaxAddSupplier, name='ajaxAddSupplier'),
+    path('ajax/ajaxGetUpdatedSuppliers/', views.ajaxGetUpdatedSuppliers, name='ajaxGetUpdatedSuppliers'),
 ]
+
+
 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

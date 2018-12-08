@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 
+from django.http import HttpResponse, Http404,JsonResponse
 from salikneta.models import * 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
@@ -81,10 +82,69 @@ def register_validate(request):
     return render(request, 'salikneta/register.html')
 
 def manageCategories(request):
-    return render(request, 'salikneta/manageCategories.html')
+    c = Category.objects.all()
+    context = {
+        "categories":c,
+    }
+
+    return render(request, 'salikneta/manageCategories.html',context)
 
 def manageSuppliers(request):
-    return render(request, 'salikneta/manageSuppliers.html')
+    s = Supplier.objects.all()
+    context = {
+        "suppliers":s,
+    }
+    return render(request, 'salikneta/manageSuppliers.html',context)
 
 def manageItems(request):
     return render(request, 'salikneta/manageItems.html')
+
+def ajaxAddCategory(request):
+    print("AW")
+    name = request.GET.get('categoryName')
+    desc = request.GET.get('description')
+    print("WEW")
+    c = Category(name=name,description=desc)
+    c.save()
+
+    return HttpResponse()
+
+def ajaxAddSupplier(request):
+    supplierName = request.GET.get('supplierName')
+    contactNumber = request.GET.get('contactNumber')
+    emailAddress = request.GET.get('emailAddress')
+    website = request.GET.get('website')
+    address1 = request.GET.get('address1')
+    address2 = request.GET.get('address2')
+    city = request.GET.get('city')
+    province = request.GET.get('province')
+    country = request.GET.get('country')
+    postal = request.GET.get('postal')
+
+    s = Supplier(name=supplierName, contactNumber=contactNumber, emailAddress=emailAddress, website=website, address1=address1, address2=address2, city=city,province=province,
+        country=country,postal=postal)
+    s.save()
+
+    return HttpResponse()
+
+
+def ajaxGetUpdatedCategories(request):
+    print("WaaaaaE")
+    c = Category.objects.all()
+    categories = []
+    for x in range(0, len(c)):
+        categories.append({"name":c[x].name,"description":c[x].description})
+
+
+    return JsonResponse(categories, safe=False)
+
+def ajaxGetUpdatedSuppliers(request):
+    print("Waa2aaaE")
+    c = Supplier.objects.all()
+    suppliers = []
+    for x in range(0, len(c)):
+        suppliers.append({"name":c[x].name,"contactNumber":c[x].contactNumber,"emailAddress":c[x].emailAddress, "address1":c[x].address1, "city":c[x].city,"country":c[x].country})
+
+
+
+    return JsonResponse(suppliers, safe=False)

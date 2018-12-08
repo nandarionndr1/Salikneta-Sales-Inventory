@@ -1,6 +1,7 @@
 
 {% load staticfiles %}
 {% include 'salikneta/includes/head.html' %}
+<html>
 <body>
   <section id="container">
 
@@ -17,11 +18,127 @@
 	            <div class="border-head">
 	              <h1>CATEGORIES</h1>
 	            </div>
-              <button>Add Category</button>
+
+
+
+
+
+              <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">
+                Add category
+                </button>
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">ADD NEW CATEGORY</h4>
+                    </div>
+                    <div class="modal-body">
+
+                  <div class="login-wrap">
+                  <label class="control-label">Category name</label>
+                            <input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="Category name" autofocus>
+                            <br>
+                  <label class="control-label">Description</label>
+                            <input type="text" class="form-control" id="description" name="description" placeholder="Description"><br>
+
+
+                          </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" onclick="addCategory()" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+    <section id="main-content">
+      <section class="wrapper">
+
+        <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+
+              <section id="unseen">
+                <table class="table table-bordered table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody id ="categoryBody">
+                    {% for category in categories %}
+                      <tr>
+                        <td>{{category.name}}</td>
+                        <td>{{category.description}}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </section>
+            </div>
+            <!-- /content-panel -->
+          </div>
+          <!-- /col-lg-4 -->
+        </div>
+
+
+
+<!-- 
 	            </div>
-       		 </div>
+       		 </div> -->
 		    </section>
 		</section>
 	</section>
 </body>
+<script>
+    function addCategory(){
+      var categoryName = $("#categoryName").val();
+      var description = $("#description").val();
+      if(categoryName != "" && description != ""){
+        alert("New category has been added!");
+        $.ajax({
+          url: '{% url "ajaxAddCategory" %}',
+          data: {
+            "categoryName":categoryName,
+            "description":description,
+          },
+          dataType: 'json',
+          success: function(data){  
+            
+          }
+          
+       });
+        $.ajax({
+          url: '{% url "ajaxGetUpdatedCategories" %}',
+          data: {
+
+
+          },
+          dataType: 'json',
+          success: function(data){  
+            console.log(data);
+            wew = "";
+            for(var i = 0; i < data.length; i++){
+
+              wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].description + "</td></tr>";
+            }
+            $("#categoryBody").html(wew);
+          }
+          
+       });
+      }
+
+
+    }
+</script>
             <!--custom chart end-->
+            </html>
