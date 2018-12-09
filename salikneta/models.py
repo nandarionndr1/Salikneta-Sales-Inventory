@@ -95,8 +95,9 @@ class OrderLines(models.Model):
     @property
     def get_delivered_products_num(self):
         qty = 0
-        for d in DeliveredProducts.objects.get(idOrderLines=self.idOrderLines):
+        for d in DeliveredProducts.objects.filter(idOrderLines=self.idOrderLines):
             qty += d.qty
+        return qty
 
 class Delivery(models.Model):
     idDelivery = models.AutoField(primary_key=True)
