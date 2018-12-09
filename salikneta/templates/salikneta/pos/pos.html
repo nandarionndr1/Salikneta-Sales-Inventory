@@ -31,47 +31,50 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="col-lg-6">
-              <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
-                  <div class="row text-left" style="background-color: #03DAC6;padding: 10px">
-                      <div class="col-md-6 text-left">
-                        <h4 style="margin: 0;padding: 0; color: black">Sales Invoice {{ si_num }}</h4>
-                      </div>
-                      <div class="col-md-6 text-right">
-                        <h6 style="margin: 0;padding: 0;">{{ date|date:"M d, Y" }}</h6>
-                      </div>
-                  </div>
-                  <div class="row">
-                        <table class="table table-hover">
-                        <thead>
-                          <tr>
-                            <th style="text-align: left; width:37%" >Item Name</th>
-                            <th style="text-align: right; width:20%">Qty</th>
-                            <th style="text-align: right; width:5%">Disc(%)</th>
-                            <th style="text-align: right; width:20%">Amount Due</th>
-                          </tr>
-                        </thead>
-                        <tbody id="checkout_tbl">
-
-                        </tbody>
-                      </table>
-                      <hr>
-                      <div class="row" style="padding: 10px">
+                <form method="post" action="">
+                  <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
+                      <div id="print_div">
+                      <div class="row text-left" style="background-color: #03DAC6;padding: 10px">
                           <div class="col-md-6 text-left">
-                              <b>Net Total</b>
+                            <h4 style="margin: 0;padding: 0; color: black">Sales Invoice {{ si_num }}</h4>
                           </div>
                           <div class="col-md-6 text-right">
-                              P<b id="net_total"> 0.0</b>
+                            <h6 style="margin: 0;padding: 0;">{{ date|date:"M d, Y" }}</h6>
                           </div>
                       </div>
-                    </div>
-              <div>
-                <a class="btn btn-success" href="#"><i class="fa fa-check"></i> Pay</a>
-                <a class="btn btn-default" href="" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
-              </div>
-              </div>
+                      <div class="row">
+                            <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th style="text-align: left; width:37%" >Item Name</th>
+                                <th style="text-align: right; width:20%">Qty</th>
+                                <th style="text-align: right; width:5%">Disc(%)</th>
+                                <th style="text-align: right; width:20%">Amount Due</th>
+                              </tr>
+                            </thead>
+                            <tbody id="checkout_tbl">
+
+                            </tbody>
+                          </table>
+                          <hr>
+                          <div class="row" style="padding: 10px">
+                              <div class="col-md-6 text-left">
+                                  <b>Net Total</b>
+                              </div>
+                              <div class="col-md-6 text-right">
+                                  P<b id="net_total"> 0.0</b>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <button class="btn btn-success" type="submit"><i class="fa fa-check"></i> Pay</button>
+                        <a class="btn btn-default" href="" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
+                        <a class="btn btn-info" href=""><i class="fa fa-print"></i> Print Preview</a>
+                      </div>
+                  </div>
+                </form>
             </div>
-              <!-- end custombox -->
-            <!-- end col-4 -->
             <div class="col-lg-6">
               <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
               <div class="row no-gutter" style="padding: 10px;padding-bottom: 0px">
@@ -97,6 +100,7 @@
                        category="{{ p.idCategory.name }}"
                        unitMeasure="{{ p.unitOfMeasure }}"
                        SKU="{{ p.SKU }}"
+
                        product_code="{{ p.get_product_code }}"
                        product_price="{{ p.suggestedUnitPrice }}">
                     <div class="w3-card-4" style="width:100%">
@@ -158,7 +162,7 @@
     }
     $( ".selectable" ).click(function() {
       let str = '<tr id="item_'+item_ids+'">';
-      str += '<td style="text-align: left">';
+      str += '<td style="text-align: left"><input type="hidden" name="prod_codes[]" value="'+($(this).attr('product_code')-1000)+'">';
       str+= $(this).attr('product_name');
       str += ' <button type="button" onclick="remove_row('+item_ids+')" class="btn btn-round btn-warning" style="padding-bottom:0px;padding-top:0px;padding-right: 3px;padding-left: 3px"><i class="fa fa-remove"></i></button>';
       str += '<br><p class="text-muted">['+$(this).attr('product_code')+']</p></td><td style="text-align: right"> ';
