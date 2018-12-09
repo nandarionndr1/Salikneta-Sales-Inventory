@@ -21,6 +21,8 @@
       padding-left: 0;
 
     }
+    .font_md{font-size: 12px}
+    .font_lg{font-size: 14px}
     .right_aln {
         text-align: right;
     }
@@ -42,50 +44,110 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="col-lg-6">
-                <form method="post" action="">
-                    {% csrf_token %}
-                  <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
-                      <div id="print_div">
-                      <div class="row text-left" style="background-color: #03DAC6;padding: 10px">
-                          <div class="col-md-6 text-left">
-                            <h4 style="margin: 0;padding: 0; color: black">Sales Invoice {{ si_num }}</h4>
-                          </div>
-                          <div class="col-md-6 text-right">
-                            <h6 style="margin: 0;padding: 0;">{{ date|date:"M d, Y" }}</h6>
-                          </div>
-                      </div>
-                      <div class="row">
-                            <table class="table table-hover">
-                            <thead>
-                              <tr>
-                                <th style="text-align: left; width:37%" >Item Name</th>
-                                <th style="text-align: right; width:20%">Qty</th>
-                                <th style="text-align: right; width:5%">Disc(%)</th>
-                                <th style="text-align: right; width:20%">Amount Due</th>
-                              </tr>
-                            </thead>
-                            <tbody id="checkout_tbl">
 
-                            </tbody>
-                          </table>
-                          <hr>
-                          <div class="row" style="padding: 10px">
-                              <div class="col-md-6 text-left">
-                                  <b>Net Total</b>
+
+
+              <!-- /panel-heading -->
+                        <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="custom-box" style="padding-left: 0px;padding-right: 0px;padding-top: 0;">
+
+                              <div class="row text-left" style="margin-left: 0px;margin-right: 0px;background-color: #03DAC6;padding: 10px">
+                                  <div class="col-md-6 text-left">
+                                    <h4 style="margin: 0;padding: 0; color: black">Sales Invoice {{ si_num }}</h4>
+                                  </div>
+                                  <div class="col-md-6 text-right">
+                                    <h6 style="margin: 0;padding: 0;">{{ date|date:"M d, Y" }}</h6>
+                                  </div>
                               </div>
-                              <div class="col-md-6 text-right">
-                                  P<b id="net_total"> 0.0</b>
+                              <ul class="nav nav-tabs nav-justified">
+                          <li class="active">
+                            <a data-toggle="tab" href="#overview">Point of Sale</a>
+                          </li>
+                          <li>
+                            <a data-toggle="tab" href="#contact" class="contact-map">Receipt</a>
+                          </li>
+                        </ul>
+                        <div class="tab-content">
+                          <div id="overview" class="tab-pane active">
+                              <div style="margin-left: 0px;margin-right: 0px" class="row">
+                                    <table class="table table-hover">
+                                    <thead>
+                                      <tr>
+                                        <th style="text-align: left; width:37%" >Item Name</th>
+                                        <th style="text-align: right; width:20%">Qty</th>
+                                        <th style="text-align: right; width:5%">Disc(%)</th>
+                                        <th style="text-align: right; width:20%">Amount Due</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody id="checkout_tbl">
+
+                                    </tbody>
+                                  </table>
+                                  <hr>
+                                  <div class="row" style="padding: 10px">
+                                      <div class="col-md-6 text-left">
+                                          <b>Net Total</b>
+                                      </div>
+                                      <div class="col-md-6 text-right">
+                                          P<b id="net_total"> 0.0</b>
+                                      </div>
+                                  </div>
+                                </div>
+                              <div>
+                                <button class="btn btn-success" id="pay_btn" onclick="" type="submit"><i class="fa fa-check"></i> Pay</button>
+                                <a class="btn btn-default" href="" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
+                                <a class="btn btn-info" href="" onclick="printDiv('print_div')"><i class="fa fa-print"></i> Print Preview</a>
                               </div>
+                          </div>
+                          <div id="contact" class="tab-pane">
+                            <div class="row" id="print_div">
+                                <div class="invoice-body" style="padding-top: 0px">
+                                <div class="row">
+                                    <div class="col-md-6" style="text-align: left">
+                                      <h3>Salikneta Taft</h3>
+                                      <address class="font_md">
+                                        <strong class="font_lg">Salikneta Coop. Inc</strong>
+                                      </address>
+                                    </div>
+                                    <!-- /pull-left -->
+                                    <div class="col-md-6" style="text-align: right">
+                                        <div class="row">INVOICE NO : {{ si_num }}
+                                        </div>
+                                        <div class="row">INVOICE DATE :  {{ date|date:"d/m/Y" }}
+                                        </div>
+                                        <!-- /row -->
+                                        <br>
+                                    </div>
+
+                                </div>
+                                <!-- /col-lg-10 -->
+                                <table class="table" style="width: 100%;border: 1px solid black;">
+                                  <thead style="border: 1px solid black;">
+                                    <tr>
+                                      <th style="border: 1px solid black;width:10%" class="text-center" style="text-align: center">QTY</th>
+                                      <th style="border: 1px solid black;width:10%" class="text-center">UOM</th>
+                                      <th style="border: 1px solid black;width:35%" class="text-left">ITEM NAME</th>
+                                      <th style="border: 1px solid black;width:20%" class="text-right">UNIT PRICE</th>
+                                      <th style="border: 1px solid black;width:10%" class="text-right">DISC</th>
+                                      <th style="border: 1px solid black;width:15%" class="text-right">TOTAL</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody id="receipt_tbl">
+
+                                  </tbody>
+                                </table>
+                                <hr>
+                                    <div class="pull-right" style="float:right"><u>TOTAL AMOUNT: P<b id="r_net_total"> 0.0</b></u></div>
+                                <br>
+                                <br>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div>
-                        <button class="btn btn-success" id="pay_btn" type="submit"><i class="fa fa-check"></i> Pay</button>
-                        <a class="btn btn-default" href="" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
-                        <a class="btn btn-info" href=""><i class="fa fa-print"></i> Print Preview</a>
-                      </div>
                   </div>
                 </form>
+
             </div>
             <div class="col-lg-6">
               <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
@@ -150,6 +212,23 @@
     {% for p in products %}
         prod_ids[{{ p.get_product_code }}]={{ p.unitsInStock }};
     {% endfor %}
+        function printDiv(div) {
+        var printStr = "<script>"+"window.print();</"+"script>";
+        var printCont = document.getElementById(div);
+        var html = '<html><head>'+
+               '<title>RECEIPT {{ si_num }}</title>'+
+               '</head><body style="background:#ffffff;">'+
+               printCont.innerHTML+
+               '</body></html>'+printStr;
+        var WindowObject =window.open('',"Print Window",
+            "width=1000,height=1000,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
+        WindowObject.document.writeln(html);
+        WindowObject.document.close();
+        WindowObject.focus();
+        WindowObject.print();
+        WindowObject.close();
+
+    }
     function check_over_order(id) {
         total_qty = 0;
         prod = $("#qty_"+id).attr('prod');
@@ -183,6 +262,10 @@
 
         $("#disp_disc_"+id).html(parseFloat(disc).toFixed(2));
         $("#amt_"+id).html(parseFloat(gross - disc).toFixed(2));
+
+        $("#r_disc_"+id).html($("#disc_"+id).val());
+        $("#r_amt_"+id).html(parseFloat(gross - disc).toFixed(2));
+        $("#r_qty_"+id).html($("#qty_"+id).val());
         compute_net();
         check_over_order(id);
     }
@@ -193,6 +276,7 @@
         });
 
       $("#net_total").html(parseFloat(net_total).toFixed(2));
+      $("#r_net_total").html(parseFloat(net_total).toFixed(2));
     }
     $( ".selectable" ).click(function() {
       let str = '<tr id="item_'+item_ids+'">';
@@ -206,11 +290,26 @@
       str+= '<span class="help-block">(<p id="disp_disc_'+item_ids+'" style="display: inline">0.0</p>)</span></td>';
       str+= '<td style="text-align: right">P<b id="amt_'+item_ids+'" class="amt">'+$(this).attr('product_price')+'</b></td>';
       $("#checkout_tbl").append(str);
-      item_ids +=1;
+
       net_total += parseFloat($(this).attr('product_price'));
       $("#net_total").html(parseFloat(net_total).toFixed(2));
-    });
 
+      str = '<tr id="r_item_'+item_ids+'">';
+      str +='<td class="text-center"  style="border: 1px solid black;text-align: center" id="r_qty_'+item_ids+'">1</td>';
+      str +='<td class="text-center"  style="border: 1px solid black;text-align: center">'+$(this).attr('unitMeasure')+'</td>';
+      str +='<td style="border: 1px solid black;text-align: center">'+$(this).attr('product_name')+'</td>';
+      str +='<td class="text-right"  style="border: 1px solid black;text-align: right">P'+$(this).attr('product_price')+'</td>';
+      str +='<td class="text-right" style="border: 1px solid black;text-align: right"><b id="r_disc_'+item_ids+'">0</b>%</td>';
+      str += '<td class="text-right" style="border: 1px solid black;text-align: right">P<b id="r_amt_'+item_ids+'">'+$(this).attr('product_price')+'</b></td>';
+      str +='</tr>';
+      $("#receipt_tbl").append(str);
+      item_ids +=1;
+    });
+/*
+<tr>
+  <td class="text-right" style="border: 1px solid black;text-align: right">P10.80</td>
+</tr>
+*/
     $(document).ready(function(){
       $("#item_filter").on("keyup", function() {
         var value = $(this).val().toLowerCase();
