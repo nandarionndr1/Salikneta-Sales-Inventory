@@ -39,6 +39,13 @@ def home(request):
     return render(request, 'salikneta/home.html')
 
 def pos(request):
+    if request.method == 'POST':
+        #create Sales invoice
+        si = SalesInvoice(invoiceDate=datetime.datetime.now())
+        items = request.POST.getlist('prod_codes[]')
+        qtys = request.POST.getlist('qty[]')
+        discs = request.POST.getlist('disc[]')
+        #loop the arrays
     return render(request, 'salikneta/pos/pos.html',{'products': Product.objects.all(),
                                                      'si_num':SalesInvoice.get_latest_invoice_num(),
                                                      'date':datetime.datetime.now(),
