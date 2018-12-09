@@ -43,7 +43,8 @@ def pos(request):
         #create Sales invoice
         si = SalesInvoice(invoiceDate=datetime.datetime.now(),
                           customer="WALK-IN",
-                          idCashier_id=request.session['userID'])
+                          idCashier_id=1)# will replace to request.session['userID']
+
         ils =[]
         itms = []
         itms_dict ={}
@@ -56,25 +57,29 @@ def pos(request):
             if item not in itms:
                 itms.append(item)
                 itms_dict[item]=0
-
             prod = Product.objects.get(idProduct=item)
-            il = InvoiceLines(qty=qtys[0],
-                              unitPrice=prod.suggestedUnitPrice*qtys[0],
-                              disc=discs[0],
-                              idSales=si.idSales,
+            il = InvoiceLines(qty=float(qtys[0]),
+                              unitPrice=prod.suggestedUnitPrice*float(qtys[0]),
+                              disc=float(discs[0]),
                               idProduct_id=item
                               )
-            itms_dict[item] += qtys[0]
+            itms_dict[item] += float(qtys[0])
             ils.append(il)
         for i in itms_dict:
             prod = Product.objects.get(idProduct=i)
             if prod.unitsInStock - itms_dict[i] < 0:
                 pazucc = False
         if pazucc:
+            '''
+            for i in itms_dict:
+                prod = Product.objects.get(idProduct=i)
+                prod.unitsInStock = prod.unitsInStock - itms_dict[i]
+            '''
             si.save()
             for i in ils:
+                i.idSales = si
                 i.save()
-
+        return HttpResponseRedirect(reverse('pos'))
         #loop the arrays
     return render(request, 'salikneta/pos/pos.html',{'products': Product.objects.all(),
                                                      'si_num':SalesInvoice.get_latest_invoice_num(),
