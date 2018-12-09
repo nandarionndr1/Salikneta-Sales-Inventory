@@ -8,22 +8,33 @@
         cursor: pointer;
     }
     .row.no-gutter {
-  margin-left: 0;
-  margin-right: 0;
-}
+      margin-left: 0;
+      margin-right: 0;
+    }
+    .error
+    {
+     border:1px solid red;
+    }
+    .row.no-gutter [class*='col-']:not(:first-child),
+    .row.no-gutter [class*='col-']:not(:last-child) {
+      padding-right: 0;
+      padding-left: 0;
 
-.row.no-gutter [class*='col-']:not(:first-child),
-.row.no-gutter [class*='col-']:not(:last-child) {
-  padding-right: 0;
-  padding-left: 0;
-
-}
+    }
     .right_aln {
-    text-align: right;
-}
+        text-align: right;
+    }
 </style>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <body>
+
+    <script>
+        {% if messages %}
+            {% for message in messages %}
+                alert("{{ message }}");
+            {% endfor %}
+        {% endif %}
+    </script>
   <section id="container">
       {% include 'salikneta/includes/pos_header.html' %}
 
@@ -69,7 +80,7 @@
                         </div>
                       </div>
                       <div>
-                        <button class="btn btn-success" type="submit"><i class="fa fa-check"></i> Pay</button>
+                        <button class="btn btn-success" id="pay_btn" type="submit"><i class="fa fa-check"></i> Pay</button>
                         <a class="btn btn-default" href="" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
                         <a class="btn btn-info" href=""><i class="fa fa-print"></i> Print Preview</a>
                       </div>
@@ -135,6 +146,28 @@
 <script>
     let item_ids = 0;
     let net_total = 0.0;
+    let prod_ids = {};
+    {% for p in products %}
+        prod_ids[{{ p.get_product_code }}]={{ p.unitsInStock }};
+    {% endfor %}
+    function check_over_order(id) {
+        total_qty = 0;
+        prod = $("#qty_"+id).attr('prod');
+        $('.prod_'+prod).each(function(i, obj) {
+            total_qty += $(obj).val();
+        });
+        console.log(total_qty);
+        if (prod_ids[prod] < total_qty){
+            console.log("ops bawal yan");
+            $("#pay_btn").attr("disabled", "disabled");
+            $("#qty_"+id).addClass("error");
+            alert("insufficient products!");
+        }
+        else{
+            $("#qty_"+id).removeClass("error");
+            $("#pay_btn").removeAttr("disabled");
+        }
+    }
     function remove_row(id){
         $("#item_"+id).remove();
         compute_net();
@@ -151,11 +184,11 @@
         $("#disp_disc_"+id).html(parseFloat(disc).toFixed(2));
         $("#amt_"+id).html(parseFloat(gross - disc).toFixed(2));
         compute_net();
+        check_over_order(id);
     }
     function compute_net(){
         net_total = 0.0;
         $('.amt').each(function(i, obj) {
-            console.log(obj);
             net_total += Number(parseFloat($(obj).html()).toFixed(2));
         });
 
@@ -167,7 +200,7 @@
       str+= $(this).attr('product_name');
       str += ' <button type="button" onclick="remove_row('+item_ids+')" class="btn btn-round btn-warning" style="padding-bottom:0px;padding-top:0px;padding-right: 3px;padding-left: 3px"><i class="fa fa-remove"></i></button>';
       str += '<br><p class="text-muted">['+$(this).attr('product_code')+']</p></td><td style="text-align: right"> ';
-      str+= '<input type="text" onkeyup="compute_price('+item_ids+')" name="qty[]" price="'+$(this).attr('product_price')+'" ids="'+item_ids+'" id="qty_'+item_ids+'" class="right_aln qty form-control input-sm"  value="1"/>';
+      str+= '<input type="text" onkeyup="compute_price('+item_ids+')" name="qty[]" price="'+$(this).attr('product_price')+'" ids="'+item_ids+'" id="qty_'+item_ids+'" class="right_aln qty form-control input-sm prod_'+$(this).attr('product_code')+'" prod="'+$(this).attr('product_code')+'" value="1"/>';
       str+= '<span class="help-block">@ '+$(this).attr('product_price')+'/'+$(this).attr('unitMeasure')+'</span></td>';
       str+= '<td style="text-align: right"><input type="text" name="disc[]" onkeyup="compute_price('+item_ids+')" id="disc_'+item_ids+'"class="disc form-control input-sm right_aln"  value="0"/>';
       str+= '<span class="help-block">(<p id="disp_disc_'+item_ids+'" style="display: inline">0.0</p>)</span></td>';

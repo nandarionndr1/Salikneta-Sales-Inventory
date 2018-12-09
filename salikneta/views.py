@@ -69,6 +69,7 @@ def pos(request):
             prod = Product.objects.get(idProduct=i)
             if prod.unitsInStock - itms_dict[i] < 0:
                 pazucc = False
+                messages.warning(request, 'Invalid! over stoc')
         if pazucc:
             '''
             for i in itms_dict:
