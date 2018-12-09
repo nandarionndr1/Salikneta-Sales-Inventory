@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
+import datetime
 # Create your views here.
 
 def index(request):
@@ -30,6 +31,8 @@ def log_in_validate(request):
             request.session['username'] = user
             request.session['usertype'] = "manager"
             request.session['logged'] = True
+
+            request.session['userID'] = Manager.objects.get(username=user, password=password).idManager
             return render(request, 'salikneta/home.html')
         else:
             messages.warning(request, 'Wrong credentials, please try again.')
@@ -98,9 +101,11 @@ def purchaseOrder(request):
         branch = m[0].idBranch.name
 
     i = Product.objects.all()
+    purchaseOrders = PurchaseOrder.objects.filter().select_related("idSupplier")
+
 
     context = {
-        "suppliers":s,"branch":branch,"products":i
+        "suppliers":s,"branch":branch,"products":i,"purchaseOrders":purchaseOrders,
     }
     return render(request, 'salikneta/purchaseOrder.html',context)
 
@@ -176,6 +181,10 @@ def manageItems(request):
         c.save()
         return HttpResponseRedirect(reverse('manageItems'))
     return render(request, 'salikneta/manageItems.html',context)
+
+def backload(request):
+
+    return render(request, 'salikneta/backloads.html')
 
 def ajaxAddCategory(request):
     print("AW")
@@ -267,3 +276,24 @@ def ajaxGetInStock(request):
 
 
     return JsonResponse(products, safe=False)
+
+def ajaxAddPurchaseOrder(request):
+    products = request.GET.getlist('products[]')
+    quantity = request.GET.getlist('quantity[]')
+    supplier = request.GET.get('supplier')
+    shipTo = request.GET.get('shipTo')
+    orderDate = request.GET.get('orderDate')
+    expectedDate = request.GET.get('expectedDate')
+
+
+    po = PurchaseOrder(orderDate=datetime.datetime.strptime(orderDate, '%d-%m-%Y').strftime('%Y-%m-%d')
+    ,expectedDate=datetime.datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d')
+    , idCashier_id=request.session['userID'], idSupplier_id = supplier,status="In Transit")
+    po.save()
+
+
+    for x in range(0, len(products)):
+        orderLine = OrderLines(qty=quantity[x],idProduct_id=products[x],idPurchaseOrder_id=po.pk)
+        orderLine.save()
+
+    return HttpResponse()

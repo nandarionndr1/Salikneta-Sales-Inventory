@@ -80,7 +80,7 @@ class PurchaseOrder(models.Model):
     idSupplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     orderDate = models.DateField()
     expectedDate = models.DateField()
-
+    status = models.CharField(max_length=45)
     @property
     def get_delivery(self):
         return Delivery.objects.get(idPurchaseOrder=self.idPurchaseOrder)
@@ -103,8 +103,6 @@ class Delivery(models.Model):
     idDelivery = models.AutoField(primary_key=True)
     deliveryDate = models.DateField()
     idPurchaseOrder = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
-
-   
 
 
 class DeliveredProducts(models.Model):

@@ -4,6 +4,8 @@
     //window.location.href = "http://127.0.0.1:8000/salikneta/";
     </script>
 {% endif %}
+
+
 <!-- **********************************************************************************************************************************************************
         TOP BAR CONTENT & NOTIFICATIONS
         *********************************************************************************************************************************************************** -->
@@ -111,7 +113,7 @@
             <ul class="sub">
               <li><a href="{% url 'purchaseOrder' %}">Purchase Orders</a></li>
               <li><a href="buttons.html">Transfer Orders</a></li>
-              <li><a href="panels.html">Backloads</a></li>
+              <li><a href="{% url 'backload'%}">Backloads</a></li>
             </ul>
           </li>
           <li class="sub-menu">

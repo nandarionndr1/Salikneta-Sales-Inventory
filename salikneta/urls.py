@@ -31,6 +31,7 @@ urlpatterns = [
     path('manageSuppliers/', views.manageSuppliers, name='manageSuppliers'),
     path('manageItems/', views.manageItems, name='manageItems'),
     path('purchaseOrder/', views.purchaseOrder, name='purchaseOrder'),
+    path('backload/', views.backload, name='backload'),
     path('pos/', views.pos, name='pos'),
     path('ajax/ajaxAddCategory/', views.ajaxAddCategory, name='ajaxAddCategory'),
     path('ajax/ajaxGetUpdatedCategories/', views.ajaxGetUpdatedCategories, name='ajaxGetUpdatedCategories'),
@@ -39,6 +40,7 @@ urlpatterns = [
     path('ajax/ajaxAddItem/', views.ajaxAddItem, name='ajaxAddItem'),
     path('ajax/ajaxGetUpdatedItems/', views.ajaxGetUpdatedItems, name='ajaxGetUpdatedItems'),
     path('ajax/ajaxGetInStock/', views.ajaxGetInStock, name='ajaxGetInStock'),
+    path('ajax/ajaxAddPurchaseOrder/', views.ajaxAddPurchaseOrder, name='ajaxAddPurchaseOrder'),
 
 
 ]
