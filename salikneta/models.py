@@ -116,7 +116,7 @@ class DeliveredProducts(models.Model):
 class SalesInvoice(models.Model):
     idSales = models.AutoField(primary_key=True)
     idCashier = models.ForeignKey(Cashier, on_delete=models.CASCADE)
-    invoiceDate = models.DateField()
+    invoiceDate = models.DateTimeField(db_column='invoiceDate')
     customer = models.CharField(max_length=45)
 
     @staticmethod
@@ -127,13 +127,22 @@ class SalesInvoice(models.Model):
         except:
             return 100000
 
+    @staticmethod
+    def get_latest_invoice_id():
+        try:
+            si = SalesInvoice.objects.all().order_by("-idSales")[0]
+            return si.idSales + 1
+        except:
+            return 1
+
 
 class InvoiceLines(models.Model):
-    idSales = models.AutoField(primary_key=True)
+    idInvoiceLines = models.AutoField(db_column='idInvoiceLines', primary_key=True)  # Field name made lowercase.
     idProduct = models.ForeignKey(Product, on_delete=models.CASCADE)
     unitPrice = models.CharField(max_length=45)
     qty = models.FloatField()
-
+    idSales = models.ForeignKey(SalesInvoice, models.DO_NOTHING, db_column='idSales')  # Field name made lowercase.
+    disc = models.FloatField(blank=True, null=True)
 
 class BackLoad(models.Model):
     idBackload = models.AutoField(primary_key=True)
