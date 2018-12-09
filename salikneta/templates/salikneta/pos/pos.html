@@ -16,6 +16,10 @@
 .row.no-gutter [class*='col-']:not(:last-child) {
   padding-right: 0;
   padding-left: 0;
+
+}
+    .right_aln {
+    text-align: right;
 }
 </style>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -40,27 +44,14 @@
                         <table class="table table-hover">
                         <thead>
                           <tr>
-                            <th style="text-align: left; width:18%" >Item Code</th>
                             <th style="text-align: left; width:37%" >Item Name</th>
-                            <th style="text-align: right; width:12.5%">Qty</th>
-                            <th style="text-align: right; width:12.5%">Disc(%)</th>
-                            <th style="text-align: right; width:20%">Rate</th>
+                            <th style="text-align: right; width:20%">Qty</th>
+                            <th style="text-align: right; width:5%">Disc(%)</th>
+                            <th style="text-align: right; width:20%">Amount Due</th>
                           </tr>
                         </thead>
-                        <tbody>
-                        <!--
-                        <tr>
-                            <td style="text-align: left">100</td>
-                            <td style="text-align: left">Rubber Dildo</td>
-                            <td style="text-align: right">
-                                <input type="text" class="form-control input-sm"  value="3"/>
-                            </td>
-                              <td style="text-align: right">
-                                <input type="text" class="form-control input-sm"  value="3"/>
-                            </td>
-                            <td style="text-align: right"><b>P 75.00</b><br><p class="text-muted">(25.0)</p></td>
-                        </tr>
-                        -->
+                        <tbody id="checkout_tbl">
+
                         </tbody>
                       </table>
                       <hr>
@@ -75,7 +66,7 @@
                     </div>
               <div>
                 <a class="btn btn-success" href="#"><i class="fa fa-check"></i> Pay</a>
-                  <a class="btn btn-default" href="#"><i class="fa fa-refresh"></i> Clear</a>
+                <a class="btn btn-default" href="" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
               </div>
               </div>
             </div>
@@ -106,11 +97,12 @@
                        category="{{ p.idCategory.name }}"
                        unitMeasure="{{ p.unitOfMeasure }}"
                        SKU="{{ p.SKU }}"
+                       product_code="{{ p.get_product_code }}"
                        product_price="{{ p.suggestedUnitPrice }}">
                     <div class="w3-card-4" style="width:100%">
                         <img src="/static/media/{{ p.img_path }}" style="width:100%;height: 180px">
                         <div class="w3-container" style="text-align: left">
-                          <b style="color: black; font-size: 12px">{{ p.name }}</b>
+                          [{{ p.get_product_code }}]<b style="color: black; font-size: 12px">{{ p.name }}</b>
                             <div>
                           <b style="float:right;font-size: 10px" class="text-muted">{{ p.idCategory.name }}</b>
                           <p style="float:left;font-size: 10px" class="text-muted">P{{ p.suggestedUnitPrice }}/{{ p.unitOfMeasure }}</p>
@@ -123,22 +115,6 @@
               <div>
               </div>
               </div>
-              <!--
-              <div class="col-md-4 selectable"
-                   product_name="Malunggay"
-                   curr_stock="15"
-                   unitMeasure="KG"
-                   SKU="300G"
-                   product_price="200.0">
-                <div class="w3-card-4" style="width:100%;">
-                    <img src="{% static 'media/malunggay.jpeg' %}" style="width:100%;height: 180px">
-                    <div class="w3-container" style="text-align: left">
-                      <b style="color: black; font-size: 12px">Malungay</b>
-                      <p style="font-size: 10px" class="text-muted">P123.00 / KG</p>
-                    </div>
-                </div>
-              </div>
-              end custombox -->
             </div>
             <!-- end col-4 -->
           </div>
@@ -152,9 +128,51 @@
 </body>
 </html>
 <script>
+    let item_ids = 0;
+    let net_total = 0.0;
+    function remove_row(id){
+        $("#item_"+id).remove();
+        compute_net();
+    }
+    function resetPOS() {
+        item_ids =0;
+        $("#checkout_tbl").empty();
+        compute_net();
+    }
+    function compute_price(id) {
+        gross = $("#qty_"+id).val() * $("#qty_"+id).attr("price") ;
+        disc = parseFloat($("#disc_"+id).val()/100) * gross;
+
+        $("#disp_disc_"+id).html(parseFloat(disc).toFixed(2));
+        $("#amt_"+id).html(parseFloat(gross - disc).toFixed(2));
+        compute_net();
+    }
+    function compute_net(){
+        net_total = 0.0;
+        $('.amt').each(function(i, obj) {
+            console.log(obj);
+            net_total += Number(parseFloat($(obj).html()).toFixed(2));
+        });
+
+      $("#net_total").html(parseFloat(net_total).toFixed(2));
+    }
     $( ".selectable" ).click(function() {
-      alert($( this ).attr("product_name"));
+      let str = '<tr id="item_'+item_ids+'">';
+      str += '<td style="text-align: left">';
+      str+= $(this).attr('product_name');
+      str += ' <button type="button" onclick="remove_row('+item_ids+')" class="btn btn-round btn-warning" style="padding-bottom:0px;padding-top:0px;padding-right: 3px;padding-left: 3px"><i class="fa fa-remove"></i></button>';
+      str += '<br><p class="text-muted">['+$(this).attr('product_code')+']</p></td><td style="text-align: right"> ';
+      str+= '<input type="text" onkeyup="compute_price('+item_ids+')" name="qty[]" price="'+$(this).attr('product_price')+'" ids="'+item_ids+'" id="qty_'+item_ids+'" class="right_aln qty form-control input-sm"  value="1"/>';
+      str+= '<span class="help-block">@ '+$(this).attr('product_price')+'/'+$(this).attr('unitMeasure')+'</span></td>';
+      str+= '<td style="text-align: right"><input type="text" name="disc[]" onkeyup="compute_price('+item_ids+')" id="disc_'+item_ids+'"class="disc form-control input-sm right_aln"  value="0"/>';
+      str+= '<span class="help-block">(<p id="disp_disc_'+item_ids+'" style="display: inline">0.0</p>)</span></td>';
+      str+= '<td style="text-align: right">P<b id="amt_'+item_ids+'" class="amt">'+$(this).attr('product_price')+'</b></td>';
+      $("#checkout_tbl").append(str);
+      item_ids +=1;
+      net_total += parseFloat($(this).attr('product_price'));
+      $("#net_total").html(parseFloat(net_total).toFixed(2));
     });
+
     $(document).ready(function(){
       $("#item_filter").on("keyup", function() {
         var value = $(this).val().toLowerCase();

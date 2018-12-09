@@ -62,6 +62,9 @@ class Product(models.Model):
     class Meta:
         managed = False
         db_table = 'salikneta_product'
+    @property
+    def get_product_code(self):
+        return self.idProduct + 1000
 
 class PurchaseOrder(models.Model):
     idPurchaseOrder = models.AutoField(primary_key=True)
