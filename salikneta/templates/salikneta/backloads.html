@@ -3,6 +3,11 @@
 {% include 'salikneta/includes/head.html' %}
 <body>
   <section id="container">
+  <style>
+  	th,td{
+  		text-align: center;
+  	}
+  </style>
 
 
 
@@ -17,9 +22,56 @@
               <h4 class="mb"><i class="fa fa-angle-right"></i> Backload</h4>
               <button class="btn btn-success btn-md" data-toggle="modal" data-target="#myModal" style="margin-bottom: 1vh">Add Backload</button>
 
-               
+                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                  <h4 class="modal-title" id="myModalLabel">ADD BACKLOAD</h4>
+                                </div>
+                                <div class="modal-body">
+                                      
+                                  <h4>BACKLOAD</h4>
 
+                                  	<div class="row">
+			                            <div class="col-md-12">
+			                              <table class="table table-hover"> 
+			                                <thead>
+			                                  <tr>
+			                                  	<th></th>
+			                                    <th width="25%">Item name</th>
+			                                    <th>In stock</th>
+			                                    <th width="10%">Remove stock</th>
+			                                    <th>Stock after</th>
+			                                    <th>Reason</th>
+			                                  </tr>
+			                                </thead>
 
+			                                <tbody id="tableData">
+			                             		
+			                                 
+
+			                                </tbody>
+			                              </table>
+			                            </div>
+			                          </div>
+			                           <div class="row">
+			                            <div class="col-md-4"></div>
+			                            <div class="col-md-4">
+			                              <button class="form-control" type="button" onclick="appendRow()">+</button>
+			                            </div>
+			                            <div class="col-md-4"></div>
+			                          </div>
+			                          <br>
+
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-success">Export</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
              
 
 
@@ -30,3 +82,69 @@
 
   </section>
 </body>
+<script>
+	function itemObject(idProduct, productName, unitsInStock){
+		this.idProduct = idProduct;
+		this.productName = productName;
+		this.unitsInStock = unitsInStock;
+
+		}
+	function deleteRow(id){
+		document.getElementById("row"+id).remove();
+	}
+	function appendRow(){
+    var items = new Array()
+    {% for p in products %}
+      items.push(new itemObject("{{p.pk}}","{{p.name}}","{{p.unitsInStock}}"));
+
+    {% endfor %}
+
+    var tbl = document.getElementById("tableData");
+    var rCount = tbl.rows.length + 1;
+
+    wew = '<tr id="row'+rCount+'">'+
+    		'<td><button id="delete'+rCount+'" onclick="deleteRow('+rCount+')" class="btn btn-danger">x</button></td>'+
+			'<td>'+
+     			'<select class="form-control" id="dropdown'+rCount +'" onchange=updateInStock('+rCount+')>';
+     			for(var q = 0; q < items.length; q++){
+     				wew += '<option value="'+items[q].idProduct+'">' + items[q].productName + '</option>';
+     			}
+     				wew += '</select>'+
+     			'</td>'+
+     			'<td id="unitsInStock' + rCount+ '">2</td>'+
+     			'<td><input id="removeStock'+rCount+'" onkeyup="updateAfter('+rCount+')" type="number" class="form-control"/></td>'+
+     			'<td id="stockAfter' + rCount +'">2</td>'+
+     			'<td><input class="form-control" type="text" value="Expired"></td>'+
+     		'</tr> ';   		
+   
+   		 $("#tableData").append(wew);
+		 }
+
+	function updateAfter(id){
+		var stockAfter = document.getElementById("stockAfter"+id);
+		var removeStock = document.getElementById("removeStock"+id).value;
+		var unitsInStock = document.getElementById("unitsInStock"+id);
+		stockAfter.innerHTML = parseInt(unitsInStock.innerHTML) - removeStock;
+
+	}
+   function updateInStock(id){
+    var td = document.getElementById("unitsInStock"+id);
+
+    var dropdown = document.getElementById("dropdown"+id);
+
+    
+      $.ajax({
+      url: '{% url "ajaxGetInStock" %}',
+      data: {
+        "idProduct":dropdown.value,
+      },
+      dataType: 'json',
+      success: function(data){  
+        td.innerHTML = data[0].unitsInStock;
+
+      }
+      
+   });
+  }
+
+</script>

@@ -185,7 +185,12 @@ def manageItems(request):
 
 def backload(request):
 
-    return render(request, 'salikneta/backloads.html')
+
+    i = Product.objects.all()
+    context = {
+        "products":i,
+    }
+    return render(request, 'salikneta/backloads.html',context)
 
 def ajaxAddCategory(request):
     print("AW")
