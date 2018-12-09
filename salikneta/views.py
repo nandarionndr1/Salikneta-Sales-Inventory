@@ -24,7 +24,7 @@ def log_in_validate(request):
             request.session['username'] = user
             request.session['usertype'] = "cashier"
             request.session['logged'] = True
-            request.session['userID'] = True
+            request.session['userID'] = Cashier.objects.get(username=user, password=password).idCashier
             return render(request, 'salikneta/home.html')
         elif try2: 
             request.session['username'] = user
@@ -41,10 +41,40 @@ def home(request):
 def pos(request):
     if request.method == 'POST':
         #create Sales invoice
-        si = SalesInvoice(invoiceDate=datetime.datetime.now())
+        si = SalesInvoice(invoiceDate=datetime.datetime.now(),
+                          customer="WALK-IN",
+                          idCashier_id=request.session['userID'])
+        ils =[]
+        itms = []
+        itms_dict ={}
+        pazucc = True
         items = request.POST.getlist('prod_codes[]')
         qtys = request.POST.getlist('qty[]')
         discs = request.POST.getlist('disc[]')
+
+        for i,item in enumerate(items,0):
+            if item not in itms:
+                itms.append(item)
+                itms_dict[item]=0
+
+            prod = Product.objects.get(idProduct=item)
+            il = InvoiceLines(qty=qtys[0],
+                              unitPrice=prod.suggestedUnitPrice*qtys[0],
+                              disc=discs[0],
+                              idSales=si.idSales,
+                              idProduct_id=item
+                              )
+            itms_dict[item] += qtys[0]
+            ils.append(il)
+        for i in itms_dict:
+            prod = Product.objects.get(idProduct=i)
+            if prod.unitsInStock - itms_dict[i] < 0:
+                pazucc = False
+        if pazucc:
+            si.save()
+            for i in ils:
+                i.save()
+
         #loop the arrays
     return render(request, 'salikneta/pos/pos.html',{'products': Product.objects.all(),
                                                      'si_num':SalesInvoice.get_latest_invoice_num(),
