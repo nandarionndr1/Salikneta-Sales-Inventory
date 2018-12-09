@@ -38,6 +38,7 @@ urlpatterns = [
     path('ajax/ajaxGetUpdatedSuppliers/', views.ajaxGetUpdatedSuppliers, name='ajaxGetUpdatedSuppliers'),
     path('ajax/ajaxAddItem/', views.ajaxAddItem, name='ajaxAddItem'),
     path('ajax/ajaxGetUpdatedItems/', views.ajaxGetUpdatedItems, name='ajaxGetUpdatedItems'),
+    path('ajax/ajaxGetInStock/', views.ajaxGetInStock, name='ajaxGetInStock'),
 
 
 ]

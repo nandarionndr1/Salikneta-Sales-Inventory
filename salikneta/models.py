@@ -66,12 +66,24 @@ class Product(models.Model):
     def get_product_code(self):
         return self.idProduct + 1000
 
+    @property
+    def get_num_incoming(self):
+        incoming = 0;
+        objs = OrderLines.objects.filter(idProduct_id=self.idProduct)
+        for o in objs:
+           incoming += o.qty - o.get_delivered_products_num
+        return incoming
+
 class PurchaseOrder(models.Model):
     idPurchaseOrder = models.AutoField(primary_key=True)
     idCashier = models.ForeignKey(Cashier, on_delete=models.CASCADE)
     idSupplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     orderDate = models.DateField()
     expectedDate = models.DateField()
+
+    @property
+    def get_delivery(self):
+        return Delivery.objects.get(idPurchaseOrder=self.idPurchaseOrder)
 
 
 class OrderLines(models.Model):
@@ -80,11 +92,18 @@ class OrderLines(models.Model):
     idProduct = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.FloatField()
 
+    @property
+    def get_delivered_products_num(self):
+        qty = 0
+        for d in DeliveredProducts.objects.get(idOrderLines=self.idOrderLines):
+            qty += d.qty
 
 class Delivery(models.Model):
     idDelivery = models.AutoField(primary_key=True)
     deliveryDate = models.DateField()
     idPurchaseOrder = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
+
+   
 
 
 class DeliveredProducts(models.Model):

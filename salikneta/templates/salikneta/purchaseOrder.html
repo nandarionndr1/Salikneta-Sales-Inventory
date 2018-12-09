@@ -34,7 +34,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title" id="myModalLabel">ADD NEW SUPPLIER</h4>
+                      <h4 class="modal-title" id="myModalLabel">ADD PURCHASE ORDER</h4>
                     </div>
                     <div class="modal-body">
 
@@ -95,13 +95,48 @@ s
 
                            
                           </div>
+                          <br>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <h4>Items</h4>  
+                            </div>
+
+                            
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <table class="table table-hover"> 
+                                <thead>
+                                  <tr>
+                                    <th>Item name</th>
+                                    <th>In stock</th>
+                                    <th>Incoming</th>
+                                    <th>Quantity</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="tableData">
+                                 
+                                 
+
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                              <button class="form-control" type="button" onclick="appendRow()">+</button>
+                            </div>
+                            <div class="col-md-4"></div>
+                          </div>
+
 
 
 
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="button" onclick="addSupplier()" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                      <button type="button" onclick="see()" class="btn btn-primary">Save changes</button>
                     </div>
                   </div>
                 </div>
@@ -113,5 +148,68 @@ s
   </section>
 </body>
 <script>
+  function itemObject(idProduct, productName, unitsInStock){
+  this.idProduct = idProduct;
+  this.productName = productName;
+  this.unitsInStock = unitsInStock;
+}
+
+
+  function appendRow(){
+    var items = new Array()
+    {% for p in products %}
+      items.push(new itemObject("{{p.pk}}","{{p.name}}","{{p.unitsInStock}}"));
+
+    {% endfor %}
+
+    var tbl = document.getElementById("tableData");
+    var rCount = tbl.rows.length + 1;
+    wew = '<tr>'+
+      '<td>'+
+        '<select class="form-control" id="dropdown'+rCount +'" onchange=updateInStock('+rCount+')>';
+
+        for(var i = 0; i < items.length; i++){
+          wew += '<option value="' + items[i].idProduct+ '"> ' +items[i].productName+ ' </option>';
+        }
+    wew += '</select>'+
+      '</td>'+
+      '<td id="unitsInStock' + rCount+ '">' + items[0].unitsInStock + '</td>'+
+      '<td id="incoming'+rCount+'">5</td>'+
+      '<td><input type="number" class="form-control"></td>'+
+    '</tr>';
+    $("#tableData").append(wew);
+
+
+    
+  }
+  function updateInStock(id){
+    var td = document.getElementById("unitsInStock"+id);
+    var t2 = document.getElementById("incoming"+id);
+    var dropdown = document.getElementById("dropdown"+id);
+
+    
+      $.ajax({
+      url: '{% url "ajaxGetInStock" %}',
+      data: {
+        "idProduct":dropdown.value,
+      },
+      dataType: 'json',
+      success: function(data){  
+        td.innerHTML = data[0].unitsInStock;
+        t2.innerHTML = data[0].incoming;
+      }
+      
+   });
+  }
+  function see(){
+    var tbl = document.getElementById("tableData");
+    var rCount = tbl.rows.length;
+    for(var i = 0; i < rCount; i++){
+
+      // alert(tbl.rows[i].cells[3].children[0].value)
+      // alert(tbl.rows[i].cells[0].children[0].value); 
+    }
+
+  }
 </script>
             <!--custom chart end-->

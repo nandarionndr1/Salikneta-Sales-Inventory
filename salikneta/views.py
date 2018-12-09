@@ -62,9 +62,10 @@ def purchaseOrder(request):
         m = Cashier.objects.filter(username=request.session['username']).select_related("idBranch")
         branch = m[0].idBranch.name
 
+    i = Product.objects.all()
 
     context = {
-        "suppliers":s,"branch":branch,
+        "suppliers":s,"branch":branch,"products":i
     }
     return render(request, 'salikneta/purchaseOrder.html',context)
 
@@ -212,6 +213,20 @@ def ajaxGetUpdatedItems(request):
     products = []
     for x in range(0, len(c)):
         products.append({"name":c[x].name,"category":c[x].idCategory.name,"price":c[x].suggestedUnitPrice,"SKU":c[x].SKU,"reorder":c[x].reorderLevel})
+        
+
+
+
+    return JsonResponse(products, safe=False)
+
+
+def ajaxGetInStock(request):
+
+    pk = request.GET.get('idProduct')
+    c = Product.objects.get(pk=pk)
+    products = []
+
+    products.append({"idProduct":c.pk,"unitsInStock":c.unitsInStock,"incoming":c.get_num_incoming})
         
 
 
