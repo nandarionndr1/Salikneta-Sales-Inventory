@@ -114,7 +114,11 @@
         <div class="row mt">
           <div class="col-lg-12">
             <div class="form-panel">
+<<<<<<< HEAD
               <h4 class="mb"><i class="fa fa-angle-right"></i> Items</h4>
+=======
+              <h4 class="mb"><i class="fa fa-angle-right"></i> Current Inventory for Items</h4>
+>>>>>>> f8b13f26c02876f07405e0f393d3121dc587e7a7
               <button class="btn btn-success btn-md" data-toggle="modal" data-target="#myModal" style="margin-bottom: 1vh">Add Items</button>
 
                 <table id="itm_tbl" class="table table-bordered table-striped table-condensed">
@@ -123,7 +127,8 @@
                       <th>Name</th>
                       <th>Category</th>
                       <th>Suggested Price</th>
-                      <th>SKU</th>
+                      <th>Current Stocks</th>
+                      <th>UOM</th>
                       <th>Re-order level</th>
                     </tr>
                   </thead>
@@ -133,7 +138,8 @@
                         <td>{{product.name}}</td>
                         <td>{{product.idCategory.name}}</td>
                         <td>{{product.suggestedUnitPrice}}</td>
-                        <td>{{product.SKU}}</td>
+                        <td>{{product.unitsInStock}}</td>
+                        <td>{{product.unitOfMeasure}}</td>
                         <td>{{product.reorderLevel}}</td>
                       </tr>
                     {% endfor %}

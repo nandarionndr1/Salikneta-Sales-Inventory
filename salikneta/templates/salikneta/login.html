@@ -4,6 +4,14 @@
       MAIN CONTENT
       *********************************************************************************************************************************************************** -->
   <div id="login-page">
+
+            <script>
+                {% if messages %}
+                    {% for message in messages %}
+                        alert("{{ message }}");
+                    {% endfor %}
+                {% endif %}
+            </script>
     <div class="container">
       <form class="form-login" method="post" action="{% url 'verify' %}">
           {% csrf_token %}

@@ -55,23 +55,24 @@ def pos(request):
         items = request.POST.getlist('prod_codes[]')
         qtys = request.POST.getlist('qty[]')
         discs = request.POST.getlist('disc[]')
-
         for i,item in enumerate(items,0):
             if item not in itms:
                 itms.append(item)
                 itms_dict[item]=0
+
             prod = Product.objects.get(idProduct=item)
-            il = InvoiceLines(qty=float(qtys[0]),
-                              unitPrice=prod.suggestedUnitPrice*float(qtys[0]),
-                              disc=float(discs[0]),
+            il = InvoiceLines(qty=float(qtys[i]),
+                              unitPrice=prod.suggestedUnitPrice*float(qtys[i]),
+                              disc=float(discs[i]),
                               idProduct_id=item
                               )
-            itms_dict[item] += float(qtys[0])
+            itms_dict[item] += float(qtys[i])
             ils.append(il)
         for i in itms_dict:
             prod = Product.objects.get(idProduct=i)
             if prod.unitsInStock - itms_dict[i] < 0:
                 pazucc = False
+                messages.warning(request, 'Account Created.')
         if pazucc:
             '''
             for i in itms_dict:
