@@ -489,13 +489,16 @@ DROP TABLE IF EXISTS `salikneta_invoicelines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salikneta_invoicelines` (
-  `idSales` int(11) NOT NULL AUTO_INCREMENT,
+  `idInvoiceLines` int(11) NOT NULL AUTO_INCREMENT,
   `unitPrice` double NOT NULL,
   `qty` double NOT NULL,
   `idProduct_id` int(11) NOT NULL,
   `disc` float DEFAULT NULL,
-  PRIMARY KEY (`idSales`),
+  `idSales` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idInvoiceLines`),
   KEY `salikneta_invoicelin_idProduct_id_ea44a6fb_fk_salikneta` (`idProduct_id`),
+  KEY `idSales_idx` (`idSales`),
+  CONSTRAINT `idSales` FOREIGN KEY (`idSales`) REFERENCES `salikneta_salesinvoice` (`idSales`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `salikneta_invoicelin_idProduct_id_ea44a6fb_fk_salikneta` FOREIGN KEY (`idProduct_id`) REFERENCES `salikneta_product` (`idProduct`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -754,4 +757,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-09 15:04:26
+-- Dump completed on 2018-12-09 15:12:20
