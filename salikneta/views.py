@@ -366,14 +366,13 @@ def ajaxSaveDelivery(request):
     d = Delivery(deliveryDate=deliveryDate,idPurchaseOrder_id=idPurchaseOrder)
     d.save()
 
-    print(len(products))
-    print(len(quantity))
-    print(len(lines))
     for x in range(0, len(products)):
         d1 = DeliveredProducts(qty=quantity[x],idDelivery_id=d.pk,idOrderLines_id=lines[x])
         d1.save()
         p = Product.objects.get(pk=products[x])
-        p.unitsInStock = int(p.unitsInStock) - int(quantity[x])
+        print(quantity[x])
+        print(products[x])
+        p.unitsInStock = int(p.unitsInStock) + int(quantity[x])
         p.save()
 
     return HttpResponse()
