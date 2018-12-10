@@ -120,6 +120,7 @@
             <a href="javascript:;">
               <i class="fa fa-apple"></i>
               <span>Stocks</span>
+              <span class="label label-danger pull-right mail-danger" id="warn" style="display: none"></span>
               </a>
             <ul class="sub">
               <li><a href="{% url 'manageItems' %}">Items</a></li>
@@ -127,17 +128,11 @@
               <li><a href="{% url 'manageCategories'%}">Categories</a></li>
             </ul>
           </li>
-          <li class="sub-menu">
-            <a href="javascript:;">
+          <li class="mt">
+            <a class="active" href="{% url 'sales' %}">
               <i class="fa fa-money"></i>
               <span>Sales</span>
-              </a>
-            <ul class="sub">
-              <li><a href="general.html">General</a></li>
-              <li><a href="buttons.html">Buttons</a></li>
-              <li><a href="panels.html">Panels</a></li>
-              <li><a href="font_awesome.html">Font Awesome</a></li>
-            </ul>
+            </a>
           </li>
           <li class="sub-menu">
             <a href="javascript:;">
@@ -145,14 +140,20 @@
               <span>Reports</span>
               </a>
             <ul class="sub">
-              <li><a href="general.html">General</a></li>
-              <li><a href="buttons.html">Buttons</a></li>
-              <li><a href="panels.html">Panels</a></li>
-              <li><a href="font_awesome.html">Font Awesome</a></li>
+              <li><a href="general.html">Sales</a></li>
+              <li><a href="buttons.html">Inventory</a></li>
             </ul>
           </li>
         </ul>
         <!-- sidebar menu end-->
       </div>
     </aside>
+<script>
+    let stock_d =  $.get("{% url 'get_num_lowstock' %}");
+    stock_d.done(function(results){
+        if(results.numb > 0){
+            $("#warn").html(results.numb).show();
+        }
+    });
+</script>
     <!--sidebar end-->

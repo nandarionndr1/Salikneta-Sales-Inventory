@@ -41,6 +41,22 @@ def log_in_validate(request):
 def home(request):
     return render(request, 'salikneta/home.html')
 
+def get_num_lowstock(request):
+    return JsonResponse({"numb":Product.get_num_lowstock_items()})
+
+def get_invoice_by_id(request, idSales):
+    data = []
+    for il in SalesInvoice.objects.get(idSales=idSales).get_invoicelines:
+        data.append({"unitPrice":il.unitPrice,
+                     "qty":il.qty,
+                     "disc":il.disc,
+                     "net_price":il.get_net_price,
+                     "productName":il.idProduct.name,
+                     "uom":il.idProduct.unitOfMeasure})
+    return JsonResponse({"data":data})
+def sales(request):
+    return render(request, 'salikneta/sales.html',{"sales_invoices":SalesInvoice.objects.all()})
+
 def pos(request):
     if request.method == 'POST':
         #create Sales invoice
@@ -74,11 +90,10 @@ def pos(request):
                 pazucc = False
                 messages.warning(request, 'Account Created.')
         if pazucc:
-            '''
             for i in itms_dict:
                 prod = Product.objects.get(idProduct=i)
                 prod.unitsInStock = prod.unitsInStock - itms_dict[i]
-            '''
+                prod.save()
             si.save()
             for i in ils:
                 i.idSales = si

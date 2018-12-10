@@ -33,6 +33,10 @@ urlpatterns = [
     path('purchaseOrder/', views.purchaseOrder, name='purchaseOrder'),
     path('backload/', views.backload, name='backload'),
     path('pos/', views.pos, name='pos'),
+    path('sales/', views.sales, name='sales'),
+
+    path('get_num_low_items/', views.get_num_lowstock, name='get_num_lowstock'),
+    path('ajax/get_invoicelines_by_salesid/<int:idSales>/', views.get_invoice_by_id, name='get_invoicelines_by_salesid'),
     path('ajax/ajaxAddCategory/', views.ajaxAddCategory, name='ajaxAddCategory'),
     path('ajax/ajaxGetUpdatedCategories/', views.ajaxGetUpdatedCategories, name='ajaxGetUpdatedCategories'),
     path('ajax/ajaxAddSupplier/', views.ajaxAddSupplier, name='ajaxAddSupplier'),
@@ -43,7 +47,6 @@ urlpatterns = [
     path('ajax/ajaxAddPurchaseOrder/', views.ajaxAddPurchaseOrder, name='ajaxAddPurchaseOrder'),
     path('ajax/ajaxAddBackload/', views.ajaxAddBackload, name='ajaxAddBackload'),
     path('ajax/ajaxSaveDelivery/', views.ajaxSaveDelivery, name='ajaxSaveDelivery'),
-
 
 ]
 

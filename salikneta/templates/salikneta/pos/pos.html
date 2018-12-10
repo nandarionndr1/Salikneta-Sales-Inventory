@@ -95,9 +95,9 @@
                                   </div>
                                 </div>
                               <div>
-                                <button class="btn btn-success" id="pay_btn" onclick="" type="submit"><i class="fa fa-check"></i> Pay</button>
-                                <a class="btn btn-default" href="" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
-                                <a class="btn btn-info" href="" onclick="printDiv('print_div')"><i class="fa fa-print"></i> Print Preview</a>
+                                <button class="btn btn-success" id="pay_btn" type="submit" disabled><i class="fa fa-check"></i> Pay</button>
+                                <a class="btn btn-default" href="#" onclick="resetPOS()"><i class="fa fa-refresh"></i> Clear</a>
+                                <a class="btn btn-info" href="#" onclick="printDiv('print_div')"><i class="fa fa-print"></i> Print Preview</a>
                               </div>
                           </div>
                           <div id="contact" class="tab-pane">
@@ -152,9 +152,8 @@
             <div class="col-lg-6">
               <div class="custom-box" style="padding-left: 15px;padding-right: 15px;padding-top: 0;">
               <div class="row no-gutter" style="padding: 10px;padding-bottom: 0px">
-                  <div class="col-md-9" style="margin: 0px">
-
-              <input type="text" class="form-control input-sm" id="item_filter" placeholder="Search Item"/>
+                  <div class="col-md-7" style="margin: 0px">
+                        <input type="text" class="form-control input-sm" id="item_filter" placeholder="Search Item"/>
                   </div>
                   <div class="col-md-3">
                       <select class="form-control input-sm" id="cat_filter">
@@ -163,6 +162,11 @@
                             <option value="{{ cat.name }}">{{ cat.name }}</option>
                           {% endfor %}
                       </select>
+                  </div>
+                  <div class="col-md-2">
+                      <a class="btn btn-sm btn-info" href="{% url 'sales' %}">
+                          <i class="fa fa-barcode"></i> Sales Log
+                      </a>
                   </div>
               </div>
               <div class="row " id="item_container" style="padding-top: 0; max-height: 100vh;overflow-y: scroll;margin-top: 0px;">
@@ -212,7 +216,7 @@
     {% for p in products %}
         prod_ids[{{ p.get_product_code }}]={{ p.unitsInStock }};
     {% endfor %}
-        function printDiv(div) {
+    function printDiv(div) {
         var printStr = "<script>"+"window.print();</"+"script>";
         var printCont = document.getElementById(div);
         var html = '<html><head>'+
@@ -229,15 +233,27 @@
         WindowObject.close();
 
     }
+    function check_empty_tbl() {
+       let ct = $("#checkout_tbl tr").length;
+
+       if (ct != 0){
+            $("#pay_btn").removeAttr("disabled");
+       }else{
+            $("#pay_btn").attr("disabled", "disabled");
+       }
+    }
     function check_over_order(id) {
         total_qty = 0;
+        empty=false;
         prod = $("#qty_"+id).attr('prod');
         $('.prod_'+prod).each(function(i, obj) {
             total_qty += $(obj).val();
+            if ($(obj).val() === null || $(obj).val() === ""){
+                empty=true;
+            }
         });
         console.log(total_qty);
         if (prod_ids[prod] < total_qty){
-            console.log("ops bawal yan");
             $("#pay_btn").attr("disabled", "disabled");
             $("#qty_"+id).addClass("error");
             alert("insufficient products!");
@@ -246,15 +262,24 @@
             $("#qty_"+id).removeClass("error");
             $("#pay_btn").removeAttr("disabled");
         }
+        if (empty){
+            $("#pay_btn").attr("disabled", "disabled");
+            $("#qty_"+id).addClass("error");
+        }
+
     }
     function remove_row(id){
         $("#item_"+id).remove();
+        $("#r_item_"+id).remove();
         compute_net();
+        check_empty_tbl()
     }
     function resetPOS() {
         item_ids =0;
         $("#checkout_tbl").empty();
+        $("#receipt_tbl").empty();
         compute_net();
+        check_empty_tbl()
     }
     function compute_price(id) {
         gross = $("#qty_"+id).val() * $("#qty_"+id).attr("price") ;
@@ -304,6 +329,8 @@
       str +='</tr>';
       $("#receipt_tbl").append(str);
       item_ids +=1;
+
+      check_empty_tbl();
     });
 /*
 <tr>
