@@ -373,7 +373,7 @@ def ajaxSaveDelivery(request):
         d1 = DeliveredProducts(qty=quantity[x],idDelivery_id=d.pk,idOrderLines_id=lines[x])
         d1.save()
         p = Product.objects.get(pk=products[x])
-        p.unitsInStock = int(p.unitsInStock) - int(quantity[x])
+        p.unitsInStock = int(p.unitsInStock) + int(quantity[x])
         p.save()
 
     return HttpResponse()
