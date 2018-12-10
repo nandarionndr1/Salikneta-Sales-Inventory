@@ -52,6 +52,7 @@ class Product(models.Model):
     description = models.CharField(max_length=45)
     suggestedUnitPrice = models.FloatField()
     unitsInStock = models.IntegerField()
+    unitsReserved = models.IntegerField(default=0)
     reorderLevel = models.IntegerField()
     unitOfMeasure = models.CharField(max_length=45)
     SKU = models.IntegerField()

@@ -32,6 +32,7 @@ urlpatterns = [
     path('manageItems/', views.manageItems, name='manageItems'),
     path('purchaseOrder/', views.purchaseOrder, name='purchaseOrder'),
     path('backload/', views.backload, name='backload'),
+    path('transferOrder/', views.transferOrder, name='transferOrder'),
     path('pos/', views.pos, name='pos'),
     path('ajax/ajaxAddCategory/', views.ajaxAddCategory, name='ajaxAddCategory'),
     path('ajax/ajaxGetUpdatedCategories/', views.ajaxGetUpdatedCategories, name='ajaxGetUpdatedCategories'),
