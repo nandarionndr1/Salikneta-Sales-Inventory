@@ -22,6 +22,86 @@
               <h4 class="mb"><i class="fa fa-angle-right"></i> Backload</h4>
               <button class="btn btn-success btn-md" data-toggle="modal" data-target="#myModal" style="margin-bottom: 1vh">Add Backload</button>
 
+ 				<table id="cat_tbl" class="table table-striped table-bordered" style="width:100%">
+                  <thead>
+                    <tr>
+                      <th>Backload No.</th>
+                      <th>Backload Date</th>
+                      <th>View</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                   
+
+                      {% for b in backloads %}
+                     <tr>
+                        <td>{{b.pk}}</td>
+                        <td>{{b.backloadDate}}</td>
+
+                        <td><button class="btn btn-round btn-primary" data-toggle="modal" data-target="#myModal{{b.pk}}">View</button>
+                         <!-- Modal -->
+                          <div class="modal fade" id="myModal{{b.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                  <h4 class="modal-title" id="myModalLabel">VIEW BACKLOAD</h4>
+                                </div>
+                                <div class="modal-body">
+                                   <div class="row">
+                                   <div class="col-md-2"></div>
+                                   		<div class="col-md-4">
+                                   			
+                                  			<h4 style="float: left;">BACKLOAD  #{{b.pk}}</h4>
+                                   		</div>
+                                   		<div class="col-md-4">
+                                  <h4 style="float: right;">{{b.backloadDate}}</4></div>
+                                   </div>
+                                   <div class="col-md-2"></div>
+                                  <hr/>
+                              <div class="login-wrap">
+                                <h4>Items</h4>
+                                 <table class="table table-hover"> 
+	                                <thead>
+	                                  <tr>
+	                                  	<th width="25%">Item name</th>
+	                                    <th>Stock removed</th>
+	                                    <th>Reason</th>
+	                                  </tr>
+	                                </thead>
+	                                	
+	                                <tbody>
+	                             		{% for wew in b.get_backload_lines %}
+	                                		<tr>
+	                                			<th>{{wew.idProduct_id}}</th>
+	                                			<th>{{wew.qty}}</th>
+	                                			<th>{{wew.reason}}</th>
+	                                		</tr>
+	                                	{% endfor %}
+	                                 
+
+	                                </tbody>
+	                              </table>
+
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+</td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+                </table>
+
+
+
+
                  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                               <div class="modal-content">
@@ -66,7 +146,7 @@
 
                                 <div class="modal-footer">
                                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                  <button type="button" class="btn btn-success">Export</button>
+                                  <button type="button" class="btn btn-success" onclick="recordBackload()">Export</button>
                                 </div>
                               </div>
                             </div>
@@ -111,7 +191,7 @@
      			}
      				wew += '</select>'+
      			'</td>'+
-     			'<td id="unitsInStock' + rCount+ '">2</td>'+
+     			'<td id="unitsInStock' + rCount+ '">'+ items[0].unitsInStock+'</td>'+
      			'<td><input id="removeStock'+rCount+'" onkeyup="updateAfter('+rCount+')" type="number" class="form-control"/></td>'+
      			'<td id="stockAfter' + rCount +'">2</td>'+
      			'<td><input class="form-control" type="text" value="Expired"></td>'+
@@ -146,5 +226,34 @@
       
    });
   }
+  function recordBackload(){
 
+    var tbl = document.getElementById("tableData");
+    var rCount = tbl.rows.length;
+    var products = new Array();
+    var quantity = new Array();
+    var reasons = new Array();
+    for(var i = 0; i < rCount; i++){
+      products.push(tbl.rows[i].cells[1].children[0].value);
+      quantity.push(tbl.rows[i].cells[3].children[0].value);
+      reasons.push(tbl.rows[i].cells[5].children[0].value);
+      // alert(tbl.rows[i].cells[0].children[0].value); 
+    }
+    $.ajax({
+      url: '{% url "ajaxAddBackload" %}',
+      data: {
+
+
+        "products[]":products,  
+        "quantity[]":quantity,
+        "reasons[]":reasons,
+      },
+      dataType: 'json',
+      success: function(data){  
+      }
+      
+   });
+
+
+  }
 </script>

@@ -185,10 +185,11 @@ def manageItems(request):
 
 def backload(request):
 
+    b = BackLoad.objects.all()
 
     i = Product.objects.all()
     context = {
-        "products":i,
+        "products":i,"backloads":b,
     }
     return render(request, 'salikneta/backloads.html',context)
 
@@ -301,5 +302,58 @@ def ajaxAddPurchaseOrder(request):
     for x in range(0, len(products)):
         orderLine = OrderLines(qty=quantity[x],idProduct_id=products[x],idPurchaseOrder_id=po.pk)
         orderLine.save()
+
+    return HttpResponse()
+
+def ajaxAddBackload(request):
+    products = request.GET.getlist('products[]')
+    quantity = request.GET.getlist('quantity[]')
+    reasons = request.GET.getlist('reasons[]')
+
+    backloadDate = datetime.datetime.now().strftime("%Y-%m-%d")
+    b = BackLoad(backloadDate=backloadDate,idCashier_id=request.session['userID'])
+    b.save()
+
+    for x in range(0, len(products)):
+        b1 = BackloadLines(qty=quantity[x],idProduct_id=products[x],reason=reasons[x],idBackload_id=b.pk)
+        b1.save()
+        p = Product.objects.get(pk=products[x])
+        print(p.unitsInStock)
+        p.unitsInStock = p.unitsInStock - int(quantity[x]);
+        print(p.unitsInStock)
+        p.save()
+    # po = PurchaseOrder(orderDate=datetime.datetime.strptime(orderDate, '%d-%m-%Y').strftime('%Y-%m-%d')
+    # ,expectedDate=datetime.datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d')
+    # , idCashier_id=request.session['userID'], idSupplier_id = supplier,status="In Transit")
+    # po.save()
+
+
+    # for x in range(0, len(products)):
+    #     orderLine = OrderLines(qty=quantity[x],idProduct_id=products[x],idPurchaseOrder_id=po.pk)
+    #     orderLine.save()
+
+    return HttpResponse()
+
+def ajaxSaveDelivery(request):
+    print("WEW")
+    products = request.GET.getlist('products[]')
+    quantity = request.GET.getlist('quantity[]')
+    lines = request.GET.getlist('lines[]')
+    idPurchaseOrder = request.GET.get('idPurchaseOrder')
+
+    deliveryDate = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    d = Delivery(deliveryDate=deliveryDate,idPurchaseOrder_id=idPurchaseOrder)
+    d.save()
+
+    print(len(products))
+    print(len(quantity))
+    print(len(lines))
+    for x in range(0, len(products)):
+        d1 = DeliveredProducts(qty=quantity[x],idDelivery_id=d.pk,idOrderLines_id=lines[x])
+        d1.save()
+        p = Product.objects.get(pk=products[x])
+        p.unitsInStock = int(p.unitsInStock) - int(quantity[x])
+        p.save()
 
     return HttpResponse()

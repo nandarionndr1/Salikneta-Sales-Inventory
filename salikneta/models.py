@@ -84,6 +84,9 @@ class PurchaseOrder(models.Model):
     @property
     def get_delivery(self):
         return Delivery.objects.get(idPurchaseOrder=self.idPurchaseOrder)
+    @property
+    def get_orderLines(self):
+        return OrderLines.objects.filter(idPurchaseOrder_id=self.pk).select_related('idProduct')
 
 
 class OrderLines(models.Model):
@@ -145,17 +148,21 @@ class InvoiceLines(models.Model):
 
 class BackLoad(models.Model):
     idBackload = models.AutoField(primary_key=True)
-    reason = models.CharField(max_length=45)
     idCashier = models.ForeignKey(Cashier, on_delete=models.CASCADE)
     backloadDate = models.DateField()
+    @property
+    def get_backload_lines(self):
+        return BackloadLines.objects.filter(idBackload=self.pk)
+
 
 
 class BackloadLines(models.Model):
     idBackloadLines = models.AutoField(primary_key=True)
     idProduct = models.ForeignKey(Product, on_delete=models.CASCADE)
+    idBackload = models.ForeignKey(BackLoad, models.DO_NOTHING, db_column='idBackload')
     qty = models.FloatField()
-
-
+    reason = models.CharField(max_length=45)
+   
 class TransferOrder(models.Model):
     idTransferOrder = models.AutoField(primary_key=True)
     idCashier = models.ForeignKey(Cashier, on_delete=models.CASCADE)
