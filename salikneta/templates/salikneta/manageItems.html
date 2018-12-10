@@ -114,11 +114,8 @@
         <div class="row mt">
           <div class="col-lg-12">
             <div class="form-panel">
-<<<<<<< HEAD
               <h4 class="mb"><i class="fa fa-angle-right"></i> Items</h4>
-=======
               <h4 class="mb"><i class="fa fa-angle-right"></i> Current Inventory for Items</h4>
->>>>>>> f8b13f26c02876f07405e0f393d3121dc587e7a7
               <button class="btn btn-success btn-md" data-toggle="modal" data-target="#myModal" style="margin-bottom: 1vh">Add Items</button>
 
                 <table id="itm_tbl" class="table table-bordered table-striped table-condensed">
@@ -188,23 +185,7 @@
         var cat = $("#category option:selected").text();
         wew = "<tr><td>" + itemName + "</td><td>" + cat + "</td><td>" + price + "</td><td>" + SKU +"</td><td>"+ reorder + "</td></tr>";
         $("#itemsBody").append(wew);
-       //  $.ajax({
-       //    url: '{% url "ajaxGetUpdatedItems" %}',
-       //    data: {
 
-
-       //    },
-       //    dataType: 'json',
-       //    success: function(data){  
-       //      console.log(data);
-       //      wew = "";
-       //      for(var i = 0; i < data.length; i++){
-       //        wew += "<tr><td>" + data[i].name + "</td><td>" + data[i].category + "</td><td>" + data[i].price + "</td><td>" + data[i].SKU +", "+ data[i].reorder + "</td></tr>";
-       //      }
-       //      $("#itemsBody").html(wew);
-       //    }
-          
-       // });
       }
 
 
