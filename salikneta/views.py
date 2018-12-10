@@ -208,6 +208,11 @@ def backload(request):
     }
     return render(request, 'salikneta/backloads.html',context)
 
+def transferOrder(request):
+
+
+    return render(request, 'salikneta/transferOrder.html')
+
 def ajaxAddCategory(request):
     print("AW")
     name = request.GET.get('categoryName')
