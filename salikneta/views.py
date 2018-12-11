@@ -115,8 +115,8 @@ def sales_report_detail(request):
                 if r["total_qty"] != 0:
                     new_rd.append(r)
         elif request.POST['type'] == "day":
-            sd = request.POST["date"].split("/")[2]+"-"+request.POST["date"].split("/")[0]+"-"+request.POST["date"].split("/")[1] + " 00:00:00"
-            ed = request.POST["date"].split("/")[2] + "-" + request.POST["date"].split("/")[0] + "-" + request.POST["date"].split("/")[1] + " 23:59:59"
+            sd = request.POST["date"].split("-")[2]+"-"+request.POST["date"].split("-")[0]+"-"+request.POST["date"].split("-")[1] + " 00:00:00"
+            ed = request.POST["date"].split("-")[2] + "-" + request.POST["date"].split("-")[0] + "-" + request.POST["date"].split("-")[1] + " 23:59:59"
             gen_info["message"] = "For "+request.POST["date"]
             sd = datetime.strptime(sd, '%Y-%m-%d %H:%M:%S')
             ed = datetime.strptime(ed, '%Y-%m-%d %H:%M:%S')
