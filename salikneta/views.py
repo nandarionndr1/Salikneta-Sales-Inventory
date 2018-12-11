@@ -1,5 +1,4 @@
 from django.shortcuts import render,redirect
-import datetime
 from django.http import HttpResponse, Http404,JsonResponse, HttpResponseRedirect
 from salikneta.models import *
 from django.urls import reverse
@@ -7,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
-import datetime
+from datetime import datetime,timedelta
 # Create your views here.
 
 def index(request):
@@ -60,6 +59,68 @@ def get_invoice_by_id(request, idSales):
     return JsonResponse({"data":data})
 def sales(request):
     return render(request, 'salikneta/sales.html',{"sales_invoices":SalesInvoice.objects.all()})
+
+def sales_report(request):
+    return render(request, 'salikneta/reports/sales_report.html')
+def sales_report_detail(request):
+    if request.method == 'POST':
+        report_data = []
+        new_rd = []
+        products = Product.objects.all()
+        for p in products:
+            report_data.append({"id":p.idProduct,
+                                "product": p.name,
+                                "description":p.description,
+                                "total_qty":0,
+                                "total_value":0,
+                                "sold_value":0})
+        if request.POST['type'] == "range":
+            sd = request.POST["sd"].split("/")[2]+"-"+request.POST["sd"].split("/")[0]+"-"+request.POST["sd"].split("/")[1] + " 00:00:00"
+            ed = request.POST["ed"].split("/")[2]+"-"+request.POST["ed"].split("/")[0]+"-"+request.POST["ed"].split("/")[1] + " 00:00:00"
+            sd = datetime.strptime(sd + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(ed + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            si = SalesInvoice.objects.filter(invoiceDate__gte=sd, invoiceDate__lte=ed)
+            for r in report_data:
+                for s in si:
+                    for il in s.get_invoicelines:
+                        if r["id"] == il.idProduct_id:
+                            r["total_qty"] += il.qty
+                            r["total_value"] += il.unitPrice * il.qty
+                            r["sold_value"] += il.get_net_price
+            for r in report_data:
+                if r["total_qty"] != 0:
+                    new_rd.append(r)
+        elif request.POST['type'] == "month":
+            m = request.POST["month"].split("/")[1]+"-"+request.POST["month"].split("/")[0]+"-01 00:00:00"
+            si = SalesInvoice.objects.filter(invoiceDate__year=m.year)
+            for r in report_data:
+                for s in si:
+                    if m.month == s.invoiceDate.month:
+                        for il in s.get_invoicelines:
+                            if r["id"] == il.idProduct_id:
+                                r["total_qty"] += il.qty
+                                r["total_value"] += il.unitPrice * il.qty
+                                r["sold_value"] += il.get_net_price
+            for r in report_data:
+                if r["total_qty"] != 0:
+                    new_rd.append(r)
+        elif request.POST['type'] == "day":
+            sd = request.POST["date"].split("/")[2]+"-"+request.POST["date"].split("/")[0]+"-"+request.POST["date"].split("/")[1] + " 00:00:00"
+            ed = request.POST["date"].split("/")[2] + "-" + request.POST["date"].split("/")[0] + "-" + request.POST["date"].split("/")[1] + " 23:59:59"
+            si = SalesInvoice.objects.filter(invoiceDate__gte=sd, invoiceDate__lte=ed)
+            for r in report_data:
+                for s in si:
+                    for il in s.get_invoicelines:
+                        if r["id"] == il.idProduct_id:
+                            r["total_qty"] += il.qty
+                            r["total_value"] += il.unitPrice * il.qty
+                            r["sold_value"] += il.get_net_price
+            for r in report_data:
+                if r["total_qty"] != 0:
+                    new_rd.append(r)
+    else:
+        return redirect('sales_report')
+    return render(request, 'salikneta/reports/sales_report_detail.html',{"report_data":new_rd})
 
 def pos(request):
     if request.method == 'POST':
