@@ -57,6 +57,25 @@ def get_invoice_by_id(request, idSales):
 def sales(request):
     return render(request, 'salikneta/sales.html',{"sales_invoices":SalesInvoice.objects.all()})
 
+def sales_report(request):
+    return render(request, 'salikneta/reports/sales_report.html')
+def sales_report_detail(request):
+    if request.method == 'POST':
+        if request.POST['type'] == "range":
+            sd = request.POST["sd"].split("/")[2]+"-"+request.POST["sd"].split("/")[0]+"-"+request.POST["sd"].split("/")[1] + " 00:00:00"
+            ed = request.POST["ed"].split("/")[2]+"-"+request.POST["ed"].split("/")[0]+"-"+request.POST["ed"].split("/")[1] + " 00:00:00"
+            #get si between these ranges
+            pass
+        if request.POST['type'] == "month":
+            m = request.POST["month"].split("/")[1]+"-"+request.POST["month"].split("/")[0]+"-01 00:00:00"
+            pass
+        if request.POST['type'] == "day":
+            d = request.POST["date"].split("/")[2]+"-"+request.POST["date"].split("/")[0]+"-"+request.POST["date"].split("/")[1] + " 00:00:00"
+            pass
+    else:
+        return redirect('sales_report')
+    return render(request, 'salikneta/reports/sales_report_detail.html')
+
 def pos(request):
     if request.method == 'POST':
         #create Sales invoice

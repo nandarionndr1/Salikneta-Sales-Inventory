@@ -35,6 +35,8 @@ urlpatterns = [
     path('transferOrder/', views.transferOrder, name='transferOrder'),
     path('pos/', views.pos, name='pos'),
     path('sales/', views.sales, name='sales'),
+    path('sales_report/', views.sales_report, name='sales_report'),
+    path('sales_report_detail/', views.sales_report_detail, name='sales_report_detail'),
 
     path('get_num_low_items/', views.get_num_lowstock, name='get_num_lowstock'),
     path('ajax/get_invoicelines_by_salesid/<int:idSales>/', views.get_invoice_by_id, name='get_invoicelines_by_salesid'),

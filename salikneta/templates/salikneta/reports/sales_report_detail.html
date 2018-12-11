@@ -1,0 +1,154 @@
+
+{% load staticfiles %}
+{% include 'salikneta/includes/head.html' %}
+<body>
+  <section id="container">
+
+{% include 'salikneta/includes/header.html' %}
+ <!-- **********************************************************************************************************************************************************
+        MAIN CONTENT
+        *********************************************************************************************************************************************************** -->
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title" id="myModalLabel">Invoice Summary</h4>
+    </div>
+    <div class="modal-body">
+      <div class="login-wrap">
+        <div class="invoice-body" style="padding-top: 0px" id="print_div">
+            <div class="row">
+                <div class="col-md-6" style="text-align: left">
+                  <h3>Salikneta Taft</h3>
+                  <address class="font_md">
+                    <strong class="font_lg">Salikneta Coop. Inc</strong>
+                  </address>
+                </div>
+                <!-- /pull-left -->
+                <div class="col-md-6" style="text-align: right">
+                    <div class="row" id="modal-in-date">
+                    </div>
+                    <div class="row" id="modal-in-num">
+                    </div>
+                    <br>
+                </div>
+            </div>
+            <!-- /col-lg-10 -->
+            <table class="table" style="width: 100%;border: 1px solid black;">
+              <thead style="border: 1px solid black;">
+                <tr>
+                  <th style="border: 1px solid black;width:10%" class="text-center" style="text-align: center">QTY</th>
+                  <th style="border: 1px solid black;width:10%" class="text-center">UOM</th>
+                  <th style="border: 1px solid black;width:35%" class="text-left">ITEM NAME</th>
+                  <th style="border: 1px solid black;width:20%" class="text-right">UNIT PRICE</th>
+                  <th style="border: 1px solid black;width:10%" class="text-right">DISC</th>
+                  <th style="border: 1px solid black;width:15%" class="text-right">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="receipt_tbl">
+
+              </tbody>
+            </table>
+            <hr>
+            <div class="pull-right" style="float:right"><u>TOTAL AMOUNT: P<b id="r_net_total"> 0.0</b></u></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" onclick="printDiv('print_div')">Print Receipt</button>
+    </div>
+</div>
+</div>
+</div>
+
+<section id="main-content">
+      <section class="wrapper">
+        <div class="row mt">
+          <div class="col-lg-12">
+            <div class="form-panel">
+              <h4 class="mb"><i class="fa fa-angle-right"></i> Sales Transactions</h4>
+                <table id="sup_tbl" class="table table-bordered table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Invoice Number</th>
+                      <th>Invoice Dates</th>
+                      <th>Recorded By:</th>
+                      <th>Total Quantity</th>
+                      <th>Gross Amount</th>
+                      <th>Net Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id ="invoice_tbl">
+                    {% for sales_invoice in sales_invoices %}
+                      <tr>
+                        <td><a href="#" data-toggle="modal" data-target="#myModal" 
+                               i_num="{{sales_invoice.get_invoice_id}}" 
+                               i_date="{{sales_invoice.invoiceDate|date:"Y-m-d H:i:s"}}"
+                               i_total="{{sales_invoice.get_net_invoice_amount}}"
+                               onclick="show_modal_invoice({{ sales_invoice.idSales }},this)" >{{sales_invoice.idSales}}</a></td>
+                        <td>{{sales_invoice.invoiceDate|date:"Y-m-d H:i:s"}}</td>
+                        <td>{{sales_invoice.idCashier.firstname}} {{sales_invoice.idCashier.lastname}}</td>
+                        <td>{{sales_invoice.get_invoice_qty}}</td>
+                        <td>{{sales_invoice.get_gross_invoice_amount}}</td>
+                        <td>{{sales_invoice.get_net_invoice_amount}}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <script>
+                    $(document).ready(function() {
+                        $('#sup_tbl').DataTable();
+                    });
+                </script>
+            </div>
+          </div>
+        </div>
+      </section>
+</section>
+</section>
+</body>
+<script>
+    function printDiv(div) {
+        var printStr = "<script>"+"window.print();</"+"script>";
+        var printCont = document.getElementById(div);
+        var html = '<html><head>'+
+               '<title>RECEIPT {{ si_num }}</title>'+
+               '</head><body style="background:#ffffff;">'+
+               printCont.innerHTML+
+               '</body></html>'+printStr;
+        var WindowObject =window.open('',"Print Window",
+            "width=1000,height=1000,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
+        WindowObject.document.writeln(html);
+        WindowObject.document.close();
+        WindowObject.focus();
+        WindowObject.print();
+        WindowObject.close();
+
+    }
+    function show_modal_invoice(id,obj){
+        $("#receipt_tbl").empty();
+        $("#modal-in-date").html("INVOICE DATE: "+$(obj).attr("i_date"));
+        $("#modal-in-num").html("INVOICE NO: "+$(obj).attr("i_num"));
+        $("#r_net_total").html($(obj).attr("i_total"));
+           let invoice_data =  $.get("/salikneta/ajax/get_invoicelines_by_salesid/"+id+"/");
+           invoice_data.done(function(results){
+                obj = results.data;
+                for (i in obj){
+                  str = '<tr id="r_item_'+'">';
+                  str +='<td class="text-center"  style="border: 1px solid black;text-align: center" id="r_qty_'+'">'+obj[i].qty+'</td>';
+                  str +='<td class="text-center"  style="border: 1px solid black;text-align: center">'+obj[i].uom+'</td>';
+                  str +='<td style="border: 1px solid black;text-align: center">'+obj[i].productName+'</td>';
+                  str +='<td class="text-right"  style="border: 1px solid black;text-align: right">P'+obj[i].unitPrice+'</td>';
+                  str +='<td class="text-right" style="border: 1px solid black;text-align: right"><b id="r_disc_'+'">'+obj[i].disc+'</b>%</td>';
+                  str += '<td class="text-right" style="border: 1px solid black;text-align: right">P<b id="r_amt_'+'">'+obj[i].net_price+'</b></td>';
+                  str +='</tr>';
+                  $("#receipt_tbl").append(str);
+                }
+           });
+    }
+</script>
+            <!--custom chart end-->
