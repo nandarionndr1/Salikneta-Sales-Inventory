@@ -33,7 +33,7 @@
                   <tbody>
                    
 
-                      {% for b in backloads %}
+                      {% for b in backloads reversed %}
                      <tr>
                         <td>{{b.pk}}</td>
                         <td>{{b.backloadDate}}</td>
@@ -250,6 +250,9 @@
       },
       dataType: 'json',
       success: function(data){  
+
+        alert("New backload is successfully added!");
+        window.location.href = "{% url 'backload'%}";
       }
       
    });

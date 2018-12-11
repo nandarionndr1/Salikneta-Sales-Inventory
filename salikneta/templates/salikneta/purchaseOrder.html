@@ -36,7 +36,7 @@
                   <tbody id ="categoryBody">
                    
 
-                      {% for po in purchaseOrders %}
+                      {% for po in purchaseOrders reversed %}
                      <tr>
                         <td>{{po.pk}}</td>
                         <td>{{po.orderDate}}</td>
@@ -436,7 +436,14 @@ s
       },
       dataType: 'json',
       success: function(data){  
-      }
+
+        alert("New purchase order is successfully added!");
+        window.location.href = "{% url 'purchaseOrder'%}";
+
+      },
+      error: function () {
+        alert("error");
+      },
       
    });
 
