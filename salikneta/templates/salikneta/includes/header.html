@@ -97,8 +97,8 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
          <h3 class="centered" style="color: greenyellow">Green Basket</h3>
-         <h5 class="centered" >Userfname Lname</h5>
-         <h5 class="centered">Usertype</h5>
+         <h5 class="centered" >{{request.session.firstname}} {{request.session.lastname}}</h5>
+         <h5 class="centered">{{request.session.usertype}}</h5>
           <li class="mt">
             <a class="active" href="{% url 'home' %}">
               <i class="fa fa-dashboard"></i>

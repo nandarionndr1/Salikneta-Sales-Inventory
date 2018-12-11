@@ -25,6 +25,8 @@ def log_in_validate(request):
             request.session['usertype'] = "cashier"
             request.session['logged'] = True
             request.session['userID'] = Cashier.objects.get(username=user, password=password).idCashier
+            request.session['firstname'] = Cashier.objects.get(username=user, password=password).firstname
+            request.session['lastname'] = Cashier.objects.get(username=user, password=password).lastname
             return render(request, 'salikneta/home.html')
         elif try2: 
             request.session['username'] = user
@@ -32,6 +34,8 @@ def log_in_validate(request):
             request.session['logged'] = True
 
             request.session['userID'] = Manager.objects.get(username=user, password=password).idManager
+            request.session['firstname'] = Manager.objects.get(username=user, password=password).firstname
+            request.session['lastname'] = Manager.objects.get(username=user, password=password).lastname
             return render(request, 'salikneta/home.html')
         else:
             messages.warning(request, 'Wrong credentials, please try again.')
@@ -383,8 +387,9 @@ def ajaxAddPurchaseOrder(request):
     for x in range(0, len(products)):
         orderLine = OrderLines(qty=quantity[x],idProduct_id=products[x],idPurchaseOrder_id=po.pk)
         orderLine.save()
+    print("Success")
 
-    return HttpResponse()
+    return JsonResponse([], safe=False)
 
 def ajaxAddBackload(request):
     products = request.GET.getlist('products[]')
@@ -413,7 +418,7 @@ def ajaxAddBackload(request):
     #     orderLine = OrderLines(qty=quantity[x],idProduct_id=products[x],idPurchaseOrder_id=po.pk)
     #     orderLine.save()
 
-    return HttpResponse()
+    return JsonResponse([],safe=False)
 
 def ajaxSaveDelivery(request):
     print("WEW")
@@ -427,13 +432,12 @@ def ajaxSaveDelivery(request):
     d = Delivery(deliveryDate=deliveryDate,idPurchaseOrder_id=idPurchaseOrder)
     d.save()
 
-    print(len(products))
-    print(len(quantity))
-    print(len(lines))
     for x in range(0, len(products)):
         d1 = DeliveredProducts(qty=quantity[x],idDelivery_id=d.pk,idOrderLines_id=lines[x])
         d1.save()
         p = Product.objects.get(pk=products[x])
+
+
         p.unitsInStock = int(p.unitsInStock) + int(quantity[x])
         p.save()
 
