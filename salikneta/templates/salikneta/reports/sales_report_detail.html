@@ -74,27 +74,21 @@
                 <table id="sup_tbl" class="table table-bordered table-striped table-condensed">
                   <thead>
                     <tr>
-                      <th>Invoice Number</th>
-                      <th>Invoice Dates</th>
-                      <th>Recorded By:</th>
-                      <th>Total Quantity</th>
-                      <th>Gross Amount</th>
-                      <th>Net Amount</th>
+                      <th>Product</th>
+                      <th>Description</th>
+                      <th>Total Qty:</th>
+                      <th>Gross Value:</th>
+                      <th>Net Value:</th>
                     </tr>
                   </thead>
-                  <tbody id ="invoice_tbl">
-                    {% for sales_invoice in sales_invoices %}
+                  <tbody id ="sales_tbl">
+                    {% for r in report_data %}
                       <tr>
-                        <td><a href="#" data-toggle="modal" data-target="#myModal" 
-                               i_num="{{sales_invoice.get_invoice_id}}" 
-                               i_date="{{sales_invoice.invoiceDate|date:"Y-m-d H:i:s"}}"
-                               i_total="{{sales_invoice.get_net_invoice_amount}}"
-                               onclick="show_modal_invoice({{ sales_invoice.idSales }},this)" >{{sales_invoice.idSales}}</a></td>
-                        <td>{{sales_invoice.invoiceDate|date:"Y-m-d H:i:s"}}</td>
-                        <td>{{sales_invoice.idCashier.firstname}} {{sales_invoice.idCashier.lastname}}</td>
-                        <td>{{sales_invoice.get_invoice_qty}}</td>
-                        <td>{{sales_invoice.get_gross_invoice_amount}}</td>
-                        <td>{{sales_invoice.get_net_invoice_amount}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                       </tr>
                     {% endfor %}
                   </tbody>
