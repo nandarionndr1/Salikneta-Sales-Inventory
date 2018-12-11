@@ -317,10 +317,13 @@ def transferOrder(request):
 
     p = Product.objects.all()
 
+    to = TransferOrder.objects.all()
+
     context = {
         "source":source,
         "destination":destination,
         "products":p,
+        "transferOrders":to,
     }
 
 
@@ -508,14 +511,7 @@ def ajaxTransferOrder(request):
     transferDate = request.GET.get('transferDate')
     expectedDate = request.GET.get('expectedDate')
 
-    print(products)
-    print(quantity)
-    print(source)
-    print(destination)
-    print(transferDate)
-    print(expectedDate)
 
-    print(Branch.objects.get(pk=source))
     to = TransferOrder(transferDate=datetime.strptime(transferDate, '%d-%m-%Y').strftime('%Y-%m-%d'),expectedDate=datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d'),idCashier_id=request.session['userID'],source_id=source,destination_id=destination)
     to.save()
 

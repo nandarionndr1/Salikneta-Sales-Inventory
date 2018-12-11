@@ -240,7 +240,9 @@ class TransferOrder(models.Model):
     expectedDate = models.DateField()
     source = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="source")
     destination = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="destination")
-
+    @property
+    def get_transfer_lines(self):
+        return TransferLines.objects.filter(idTransferOrder=self.pk)
 
 class TransferLines(models.Model):
     idTransferLines = models.AutoField(primary_key=True)
@@ -249,7 +251,3 @@ class TransferLines(models.Model):
     idTransferOrder = models.ForeignKey(TransferOrder, on_delete=models.CASCADE)
 
 
-class Notifs(models.Model):
-    notif_id = models.AutoField(primary_key=True)
-    msg = models.CharField(max_length=150)
-    timestamp = models.DateTimeField()
