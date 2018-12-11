@@ -20,149 +20,22 @@
 
             <div class="form-panel">
               <h4 class="mb"><i class="fa fa-angle-right"></i> Transfer Order</h4>
-              <button class="btn btn-success btn-md" data-toggle="modal" data-target="#myModal" style="margin-bottom: 1vh">Transfer Order</button>
+              <button class="btn btn-success btn-md" data-toggle="modal" data-target="#myModal" style="margin-bottom: 1vh">Add Transfer Order</button>
 
                 <table id="cat_tbl" class="table table-striped table-bordered" style="width:100%">
                   <thead>
                     <tr>
-                      <th>No.</th>
-                      <th>Order Date</th>
-                      <th>Expected Date</th>
-                      <th>Supplier</th>
+                      <th>TO#</th>
+                      <th>Date</th>
+                      <th>Received</th>
+                      <th>Source Store</th>
+                      <th>Destination Store</th>
                       <th>Status</th>
-                      <th>Print</th>
                     </tr>
                   </thead>
                   <tbody id ="categoryBody">
                    
 
-                      {% for po in purchaseOrders %}
-                     <tr>
-                        <td>{{po.pk}}</td>
-                        <td>{{po.orderDate}}</td>
-                        <td>{{po.expectedDate}}</td>
-                        <td>{{po.idSupplier.name}}</td>
-                        <td>{{po.status}}</td>
-                        <td><button class="btn btn-round btn-primary" data-toggle="modal" data-target="#myModal{{po.pk}}">View</button>
-                         <!-- Modal -->
-                          <div class="modal fade" id="myModal{{po.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                  <h4 class="modal-title" id="myModalLabel">VIEW PURCHASE ORDER</h4>
-                                </div>
-                                <div class="modal-body">
-                                      
-                                  <h4>PURCHASE ORDER  #{{po.pk}}</h4>
-
-                              <div class="login-wrap">
-                                <div class="row">
-                                  <div class="col-md-6">
-                                    
-                                    <label><strong>Supplier</strong></label>
-                                      <br>
-                                    <label>{{po.idSupplier.name}}</label>
-
-                                
-
-                                  </div>
-                                  <div class="col-md-6">
-                                    <label><strong>Ship to</strong></label>
-                                      <br>
-                                    <label>{{po.idSupplier.name}}</label>
-                                  </div>
-
-                                </div>
-                                <div class="row">
-                                  <div class="col-md-6">
-                                    
-                                    <label><strong>Order Date</strong></label>
-                                      <br>
-                                    <label>{{po.orderDate}}</label>
-
-                                
-
-                                  </div>
-                                  <div class="col-md-6">
-                                    <label><strong>Expected Date</strong></label>
-                                      <br>
-                                    <label>{{po.expectedDate}}</label>
-                                  </div>
-
-                                </div>
-                                <br>
-                                <div class="row">
-                                  <div class="col-md-12">
-                                    <table class="table table-hover" id="forPO"> 
-                                      <thead>
-                                        <tr>
-                                          <th width="25%">Item name</th>
-                                          <th>Qty ordered</th>
-                                        </tr>
-                                      </thead>
-                                        
-                                      <tbody>
-                                        {% for o in po.get_orderLines %}
-                                        <tr>
-                                          <td>{{ o.idProduct.name }}</td>
-                                          <td>{{ o.qty }}</td>
-
-                                        </tr>
-                                       
-
-                                        {% endfor %}
-
-                                      </tbody>
-
-
-                                    </table>
-                                    <table class="table table-hover" id="forDelivery" style="display: none;">
-                                      
-                                      <thead>
-                                        <tr>
-                                          <th width="25%">Item name</th>
-                                          <th>Qty ordered</th>
-                                          <th>Qty delivered</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody id="deliveryForm">
-                                        {% for o in po.get_orderLines %}
-                                        <tr>
-                                          <td class="{{o.pk}}">{{ o.idProduct.name }}</td>
-                                          <td>{{ o.qty }}</td>
-                                          <td><input class="form-control" id="{{o.idProduct.pk}}" type="number"/></td>
-                                        </tr>
-
-
-
-                                       
-
-                                        {% endfor %}
-
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-
-
-
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                  <button type="button" id="receiveBtn" onclick="forDelivery()" class="btn btn-success">Receive</button>
-                                  <button type="button" id="saveBtn" onclick="saveDelivery('{{po.pk}}')" style="display: none;" class="btn btn-success">Save</button>
-                                  <button type="button" id="printBtn" class="btn btn-primary" style="float: left;">Print</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        </td>
-
-
-                      </tr>
-                      {% endfor %}
                   </tbody>
                 </table>
                 <script>
@@ -187,26 +60,25 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title" id="myModalLabel">ADD PURCHASE ORDER</h4>
+                      <h4 class="modal-title" id="myModalLabel">ADD TRANSFER ORDER</h4>
                     </div>
                     <div class="modal-body">
 
                   <div class="login-wrap">
                           <div class="row">
                               <div class="col-md-6">
-                                <label>Supplier</label>
-                                <select class="form-control" id="supplier">
-                                  {% for supplier in suppliers %}
-                                    <option value="{{supplier.pk}}">{{supplier.name}}</option>
-                                  {% endfor %}
+                                <label>Source store</label>
+                                <select disabled class="form-control" id="source">
+                                  <option value="{{source.pk}}">{{source.name}}</option>
                                 </select>
                               </div>
 
                               <div class="col-md-6">
-                                <label>Ship to</label>
-                                <select class="form-control" id="shipTo">
-                                  <option>{{branch}}</option>
-                                    
+                                <label>Destination store</label>
+                               <select class="form-control" id="destination">
+                                 {% for d in destination %}
+                                  <option value="{{d.pk}}">{{d.name}}</option>
+                                 {% endfor %}
                                 </select>
                               </div>
                           </div>
@@ -215,12 +87,12 @@
                           <div class="row">
                             <div class="col-md-6">
                               
-                                <label>Purchase order date</label>
+                                <label>Transfer order date</label>
                                  <div class="form-group">
 
                                   <div class="col-md-9 col-xs-11">
                                     <div data-date-viewmode="years" data-date-format="dd-mm-yyyy" data-date="01-01-2014" class="input-append date dpYears">
-                                      <input type="text" id="orderDate" readonly="" value="01-01-2014" size="16" class="form-control">
+                                      <input type="text" id="transferDate" readonly="" value="01-01-2018" size="16" class="form-control">
                                       <span class="input-group-btn add-on">
                                         <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
                                         </span>
@@ -235,7 +107,7 @@
 
                                   <div class="col-md-9 col-xs-11">
                                     <div data-date-viewmode="years" data-date-format="dd-mm-yyyy" data-date="01-01-2014" class="input-append date dpYears">
-                                      <input type="text" id="expectedDate" readonly="" value="01-01-2014" size="16" class="form-control">
+                                      <input type="text" id="expectedDate" readonly="" value="01-01-2018" size="16" class="form-control">
                                       <span class="input-group-btn add-on">
                                         <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
                                         </span>
@@ -263,7 +135,7 @@ s
                                   <tr>
                                     <th>Item name</th>
                                     <th>In stock</th>
-                                    <th>Incoming</th>
+
                                     <th>Quantity</th>
                                   </tr>
                                 </thead>
@@ -289,7 +161,7 @@ s
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="button" onclick="see()" class="btn btn-primary">Save changes</button>
+                      <button type="button" onclick="saveTO()" class="btn btn-primary">Save changes</button>
                     </div>
                   </div>
                 </div>
@@ -309,7 +181,113 @@ s
   </section>
 </body>
 <script>
+function itemObject(idProduct, productName, unitsInStock){
+  this.idProduct = idProduct;
+  this.productName = productName;
+  this.unitsInStock = unitsInStock;
+
+}
 
 
+ function appendRow(){
+
+
+    var items = new Array()
+    {% for p in products %}
+      items.push(new itemObject("{{p.pk}}","{{p.name}}","{{p.unitsInStock}}"));
+
+    {% endfor %}
+
+    var tbl = document.getElementById("tableData");
+    var rCount = tbl.rows.length + 1;
+    wew = '<tr>'+
+      '<td><select class="form-control" id="dropdown'+rCount+'" onchange=updateInStock('+rCount+')>';
+
+      for (var i = 0; i < items.length; i++){
+        wew += '<option value="' +items[i].idProduct + '"> ' + items[i].productName +' </option>';
+      }
+      wew += '</select></td>'+
+      '<td id="unitsInStock'+rCount+'">'+items[0].unitsInStock+'</td>'+
+      '<td><input type="number" class="form-control" value = 1/></td>'+
+
+    '</tr>';
+
+
+    $("#tableData").append(wew);
+
+
+
+
+ }
+
+
+  function saveTO(){
+    var source = $("#source").val();
+    var destination = $("#destination").val();
+    var transferDate = $("#transferDate").val();
+    var expectedDate = $("#expectedDate").val();
+
+    var tbl = document.getElementById("tableData");
+    var rCount = tbl.rows.length;
+    var products = new Array();
+    var quantity = new Array();
+
+    alert(source)
+    alert(destination)
+    alert(transferDate)
+    alert(expectedDate)
+    for(var i = 0; i < rCount; i++){
+      products.push(tbl.rows[i].cells[0].children[0].value);
+      quantity.push(tbl.rows[i].cells[2].children[0].value);
+      // alert(tbl.rows[i].cells[0].children[0].value); 
+    }
+
+    $.ajax({
+      url: '{% url "ajaxTransferOrder" %}',
+      data: {
+        "source":source,
+        "destination":destination,
+        "transferDate":transferDate,
+        "expectedDate":expectedDate,
+
+        "products[]":products,  
+        "quantity[]":quantity,
+      },
+      dataType: 'json',
+      success: function(data){  
+
+        alert("New transfer order is successfully added!");
+
+
+      },
+      error: function () {
+        alert("error");
+      },
+      
+   });
+
+  
+
+  }
+
+  function updateInStock(id){
+    var td = document.getElementById("unitsInStock"+id);
+
+    var dropdown = document.getElementById("dropdown"+id);
+
+    
+      $.ajax({
+      url: '{% url "ajaxGetInStock" %}',
+      data: {
+        "idProduct":dropdown.value,
+      },
+      dataType: 'json',
+      success: function(data){  
+        td.innerHTML = data[0].unitsInStock;
+
+      }
+      
+   });
+  }
 </script>
             <!--custom chart end-->

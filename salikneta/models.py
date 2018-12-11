@@ -198,20 +198,27 @@ class BackLoad(models.Model):
 class BackloadLines(models.Model):
     idBackloadLines = models.AutoField(primary_key=True)
     idProduct = models.ForeignKey(Product, on_delete=models.CASCADE)
-    idBackload = models.ForeignKey(BackLoad, models.DO_NOTHING, db_column='idBackload')
+    idBackload = models.ForeignKey(BackLoad, models.DO_NOTHING, db_column='idBackload', null=True)
     qty = models.FloatField()
-    reason = models.CharField(max_length=45)
+    reason = models.CharField(max_length=45, default="Expired")
    
 class TransferOrder(models.Model):
     idTransferOrder = models.AutoField(primary_key=True)
     idCashier = models.ForeignKey(Cashier, on_delete=models.CASCADE)
     transferDate = models.DateField()
     expectedDate = models.DateField()
+    source = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="source")
+    destination = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="destination")
 
 
 class TransferLines(models.Model):
-    idTransferOrder = models.AutoField(primary_key=True)
+    idTransferLines = models.AutoField(primary_key=True)
     idProduct = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.FloatField()
+    idTransferOrder = models.ForeignKey(TransferOrder, on_delete=models.CASCADE)
 
 
+class Notifs(models.Model):
+    notif_id = models.AutoField(primary_key=True)
+    msg = models.CharField(max_length=150)
+    timestamp = models.DateTimeField()

@@ -50,6 +50,7 @@ urlpatterns = [
     path('ajax/ajaxAddPurchaseOrder/', views.ajaxAddPurchaseOrder, name='ajaxAddPurchaseOrder'),
     path('ajax/ajaxAddBackload/', views.ajaxAddBackload, name='ajaxAddBackload'),
     path('ajax/ajaxSaveDelivery/', views.ajaxSaveDelivery, name='ajaxSaveDelivery'),
+    path('ajax/ajaxTransferOrder/', views.ajaxTransferOrder, name='ajaxTransferOrder'),
 
 ]
 

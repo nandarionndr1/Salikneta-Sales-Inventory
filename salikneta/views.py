@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
+
+from django.db.models import Q
 from datetime import datetime,timedelta
 # Create your views here.
 
@@ -275,8 +277,30 @@ def backload(request):
 
 def transferOrder(request):
 
+    idUser = request.session['userID']
+    usertype = request.session['usertype']
 
-    return render(request, 'salikneta/transferOrder.html')
+    if usertype == "cashier":
+        c = Cashier.objects.filter(pk=idUser).select_related('idBranch')
+        source = c[0].idBranch
+    if usertype == "manager":
+        c = Manager.objects.filter(pk=idUser).select_related('idBranch')
+        source = c[0].idBranch
+
+    destination = Branch.objects.filter(~Q(pk=source.pk))
+
+    p = Product.objects.all()
+
+    context = {
+        "source":source,
+        "destination":destination,
+        "products":p,
+    }
+
+
+
+
+    return render(request, 'salikneta/transferOrder.html',context)
 
 def ajaxAddCategory(request):
     print("AW")
@@ -362,7 +386,7 @@ def ajaxGetInStock(request):
     c = Product.objects.get(pk=pk)
     products = []
 
-    products.append({"idProduct":c.pk,"unitsInStock":c.unitsInStock,"incoming":c.get_num_incoming})
+    products.append({"idProduct":c.pk,"unitsInStock":c.unitsInStock})
         
 
 
@@ -442,3 +466,35 @@ def ajaxSaveDelivery(request):
         p.save()
 
     return HttpResponse()
+
+
+def ajaxTransferOrder(request):
+
+
+    products = request.GET.getlist('products[]')
+    quantity = request.GET.getlist('quantity[]')
+
+    source = request.GET.get('source')
+    destination = request.GET.get('destination')
+    transferDate = request.GET.get('transferDate')
+    expectedDate = request.GET.get('expectedDate')
+
+    print(products)
+    print(quantity)
+    print(source)
+    print(destination)
+    print(transferDate)
+    print(expectedDate)
+
+    print(Branch.objects.get(pk=source))
+    to = TransferOrder(transferDate=datetime.strptime(transferDate, '%d-%m-%Y').strftime('%Y-%m-%d'),expectedDate=datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d'),idCashier_id=request.session['userID'],source_id=source,destination_id=destination)
+    to.save()
+
+
+    for x in range(0, len(products)):
+        tl = TransferLines(qty=quantity[x],idProduct_id=products[x],idTransferOrder_id=to.pk)
+        tl.save()
+
+
+
+    return JsonResponse([],safe=False)
