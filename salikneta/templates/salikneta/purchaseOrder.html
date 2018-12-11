@@ -133,7 +133,7 @@
                                           <td>{{ o.qty }}</td>
                                           <td><input class="form-control" type="number"/><span class="i{{o.idProduct.pk}}"></span></td>
                                         </tr>
-
+                                          
 
 
                                        
@@ -359,6 +359,7 @@ s
       success: function(data){  
         td.innerHTML = data[0].unitsInStock;
         t2.innerHTML = data[0].incoming;
+        console.log(data);
       }
       
    });
@@ -378,11 +379,12 @@ s
     var rCount = tbl.rows.length; 
     var products = new Array();
     var qty = new Array();
+    var ordered = new Array();
     var lines = new Array();
 
     for(var i = 0; i < rCount; i++){
       lines.push(tbl.rows[i].cells[0].className);
-      
+      ordered.push(tbl.rows[i].cells[1].innerHTML);
       products.push((tbl.rows[i].cells[2].children[1].className).substr(1));
 
       qty.push(tbl.rows[i].cells[2].children[0].value);
@@ -397,11 +399,14 @@ s
         "products[]":products,  
         "quantity[]":qty,
         "lines[]":lines,
+        "ordered[]":ordered,
 
         "idPurchaseOrder":id,
       },
       dataType: 'json',
       success: function(data){  
+        alert("Items are successfully received");
+        window.location.href = "{% url 'purchaseOrder'%}";
       }
       
    });

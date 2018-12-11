@@ -52,6 +52,9 @@ urlpatterns = [
     path('ajax/ajaxAddBackload/', views.ajaxAddBackload, name='ajaxAddBackload'),
     path('ajax/ajaxSaveDelivery/', views.ajaxSaveDelivery, name='ajaxSaveDelivery'),
     path('ajax/ajaxTransferOrder/', views.ajaxTransferOrder, name='ajaxTransferOrder'),
+    path('ajax/ajaxInTransitTO/', views.ajaxInTransitTO, name='ajaxInTransitTO'),
+    path('ajax/ajaxFinishedTO/', views.ajaxFinishedTO, name='ajaxFinishedTO'),
+    path('ajax/ajaxCancelTO/', views.ajaxCancelTO, name='ajaxCancelTO'),
 
 ]
 

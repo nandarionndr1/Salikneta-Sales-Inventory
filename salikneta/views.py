@@ -415,7 +415,7 @@ def ajaxGetInStock(request):
     c = Product.objects.get(pk=pk)
     products = []
 
-    products.append({"idProduct":c.pk,"unitsInStock":c.unitsInStock})
+    products.append({"idProduct":c.pk,"unitsInStock":c.unitsInStock,"incoming":c.get_num_incoming})
         
 
 
@@ -441,7 +441,7 @@ def ajaxAddPurchaseOrder(request):
         orderLine = OrderLines(qty=quantity[x],idProduct_id=products[x],idPurchaseOrder_id=po.pk)
         orderLine.save()
 
-    Notifs.write("New PO" + po.id + " has been added.")
+    Notifs.write("New PO" + str(po.pk) + " has been added.")
     print("Success")
 
     return JsonResponse([], safe=False)
@@ -481,6 +481,7 @@ def ajaxSaveDelivery(request):
     print("WEW")
     products = request.GET.getlist('products[]')
     quantity = request.GET.getlist('quantity[]')
+    ordered = request.GET.getlist('ordered[]')
     lines = request.GET.getlist('lines[]')
     idPurchaseOrder = request.GET.get('idPurchaseOrder')
 
@@ -489,13 +490,32 @@ def ajaxSaveDelivery(request):
     d = Delivery(deliveryDate=deliveryDate,idPurchaseOrder_id=idPurchaseOrder)
     d.save()
 
+    isOkay = True
+    print(len(ordered))
+    print(len(quantity))
+    print(len(products))
     for x in range(0, len(products)):
+
+
         d1 = DeliveredProducts(qty=quantity[x],idDelivery_id=d.pk,idOrderLines_id=lines[x])
         d1.save()
         p = Product.objects.get(pk=products[x])
+        if float(ordered[x]) != float(quantity[x]):
+            print(float(p.unitsInStock))
+            print(float(quantity[x]))
+            isOkay = False
 
         p.unitsInStock = int(p.unitsInStock) + int(quantity[x])
         p.save()
+
+
+    qwe = PurchaseOrder.objects.get(pk=idPurchaseOrder)
+    if isOkay == True:
+        qwe.status = "RECEIVED"
+        qwe.save()
+    else:
+        qwe.status = "PARTIALLY RECEIVED"
+        qwe.save()
 
     return JsonResponse([],safe=False)
 
@@ -512,13 +532,56 @@ def ajaxTransferOrder(request):
     expectedDate = request.GET.get('expectedDate')
 
 
-    to = TransferOrder(transferDate=datetime.strptime(transferDate, '%d-%m-%Y').strftime('%Y-%m-%d'),expectedDate=datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d'),idCashier_id=request.session['userID'],source_id=source,destination_id=destination)
+    to = TransferOrder(transferDate=datetime.strptime(transferDate, '%d-%m-%Y').strftime('%Y-%m-%d'),expectedDate=datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d'),idCashier_id=request.session['userID'],source_id=source,destination_id=destination,status="Draft")
     to.save()
 
 
     for x in range(0, len(products)):
         tl = TransferLines(qty=quantity[x],idProduct_id=products[x],idTransferOrder_id=to.pk)
         tl.save()
+        p = Product.objects.get(pk=products[x])
+        p.unitsInStock = int(p.unitsInStock) - int(quantity[x])
+        p.unitsReserved = int(p.unitsReserved) + int(quantity[x])
+        p.save()
 
     Notifs.write("Products have been delivered.")
+    return JsonResponse([],safe=False)
+
+def ajaxInTransitTO(request):
+    idTO = request.GET.get('idTransferOrder')
+    to = TransferOrder.objects.get(pk=int(idTO))
+    wew = to.get_transfer_lines
+    for x in range(0, len(wew)):
+        aw = wew[x].idProduct
+        aw.unitsReserved = aw.unitsReserved - int(wew[x].qty)
+        aw.save()
+
+    to.status = "In Transit"
+    to.save()
+    return JsonResponse([],safe=False)
+
+def ajaxFinishedTO(request):
+
+    idTO = request.GET.get('idTransferOrder')
+    to = TransferOrder.objects.get(pk=int(idTO))
+    
+    to.status = "Finished"
+    to.save()
+    return JsonResponse([],safe=False)
+
+
+def ajaxCancelTO(request):
+
+    idTO = request.GET.get('idTransferOrder')
+    to = TransferOrder.objects.get(pk=int(idTO))
+    wew = to.get_transfer_lines
+    for x in range(0, len(wew)):
+        aw = wew[x].idProduct
+        aw.unitsReserved = aw.unitsReserved - int(wew[x].qty)
+        print(aw.unitsInStock)
+        aw.unitsInStock = aw.unitsInStock + int(wew[x].qty)
+        print(aw.unitsInStock)
+        aw.save()
+    to.status = "Cancelled"
+    to.save()
     return JsonResponse([],safe=False)

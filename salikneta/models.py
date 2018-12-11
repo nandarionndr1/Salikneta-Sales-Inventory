@@ -240,6 +240,7 @@ class TransferOrder(models.Model):
     expectedDate = models.DateField()
     source = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="source")
     destination = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="destination")
+    status = models.CharField(max_length=50)
     @property
     def get_transfer_lines(self):
         return TransferLines.objects.filter(idTransferOrder=self.pk)
@@ -250,4 +251,6 @@ class TransferLines(models.Model):
     qty = models.FloatField()
     idTransferOrder = models.ForeignKey(TransferOrder, on_delete=models.CASCADE)
 
-
+    @property
+    def get_product(self):
+        return Product.objects.get(pk=int(self.idProduct.pk))
