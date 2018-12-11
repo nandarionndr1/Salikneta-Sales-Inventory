@@ -149,6 +149,22 @@ def editItemPrice(request):
         p.save()
         Notifs.write("Price for " +p.name+" has been updated.")
     return HttpResponseRedirect(reverse('manageItems'))
+def open_notif(request):
+    notifs = Notifs.objects.all()
+    for n in notifs:
+        n.viewed = 1
+        n.save()
+    return JsonResponse({"data": 'ok'})
+def check_notif(request):
+    notifs = Notifs.objects.all().order_by("-timestamp")[0:5]
+    chk = Notifs.check_num_new_notif()
+    data=[]
+    for n in notifs:
+        data.append({"num_notif":chk,
+                     "msg":n.msg
+                        ,"timestamp":n.get_time_ago})
+    return JsonResponse({"data": data})
+
 def pos(request):
     if request.method == 'POST':
         #create Sales invoice

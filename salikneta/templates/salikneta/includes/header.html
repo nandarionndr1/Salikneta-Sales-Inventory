@@ -35,45 +35,14 @@
           <!-- settings end -->
           <!-- notification dropdown start-->
           <li id="header_notification_bar" class="dropdown">
-            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+            <a data-toggle="dropdown" class="dropdown-toggle" onclick="openNotif()"  href="#">
               <i class="fa fa-bell-o"></i>
-              <span class="badge bg-warning">7</span>
+              <span class="badge bg-warning" id="notif_num" style="display: none"></span>
               </a>
-            <ul class="dropdown-menu extended notification">
+            <ul class="dropdown-menu extended notification" id="notif_list">
               <div class="notify-arrow notify-arrow-yellow"></div>
               <li>
-                <p class="yellow">You have 7 new notifications</p>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
-                  Server Overloaded.
-                  <span class="small italic">4 mins.</span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <span class="label label-warning"><i class="fa fa-bell"></i></span>
-                  Memory #2 Not Responding.
-                  <span class="small italic">30 mins.</span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
-                  Disk Space Reached 85%.
-                  <span class="small italic">2 hrs.</span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <span class="label label-success"><i class="fa fa-plus"></i></span>
-                  New User Registered.
-                  <span class="small italic">3 hrs.</span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">See all notifications</a>
+                <p class="yellow">Notifications</p>
               </li>
             </ul>
           </li>
@@ -87,11 +56,6 @@
         </ul>
       </div>
     </header>
-    <!--header end-->
-    <!-- **********************************************************************************************************************************************************
-        MAIN SIDEBAR MENU
-        *********************************************************************************************************************************************************** -->
-    <!--sidebar start-->
     <aside>
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
@@ -149,6 +113,37 @@
       </div>
     </aside>
 <script>
+    initNotif();
+    function openNotif() {
+        //$.get("{% url 'open_notifs' %}");
+        $("#notif_num").hide();
+    }
+    function initNotif(){
+       let notif_data = $.get("{% url 'check_notifs' %}");
+       notif_data.done(function(results){
+       obj = results.data;
+       /*
+       <li>
+                <a href="index.html#">
+                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
+                  Server Overloaded.
+                  <span class="small italic">4 mins.</span>
+                  </a>
+              </li>
+       */
+       for (i in obj){
+
+       console.log(obj);
+               $("#notif_num").show().html(obj[i].num_notif);
+               item = '<li><a href="#">';
+               item += obj[i].msg;
+               item +='<br><span class="small italic">'+obj[i].timestamp+'</span></a></li>';
+               $("#notif_list").append(item);
+           }
+               $("#notif_list").append('<li><a href="index.html#">See all notifications</a></li>');
+
+        });
+    }
     let stock_d =  $.get("{% url 'get_num_lowstock' %}");
     stock_d.done(function(results){
         if(results.numb > 0){
