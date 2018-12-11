@@ -151,11 +151,18 @@ class OrderLines(models.Model):
     qty = models.FloatField()
 
     @property
+    def get_pending(self):
+        return self.qty - self.get_delivered_products_num 
+
+    @property
     def get_delivered_products_num(self):
         qty = 0
         for d in DeliveredProducts.objects.filter(idOrderLines=self.idOrderLines):
             qty += d.qty
         return qty
+
+    
+        
 
 class Delivery(models.Model):
     idDelivery = models.AutoField(primary_key=True)
