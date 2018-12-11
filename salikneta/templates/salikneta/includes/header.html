@@ -64,13 +64,13 @@
          <h5 class="centered" >{{request.session.firstname}} {{request.session.lastname}}</h5>
          <h5 class="centered">{{request.session.usertype}}</h5>
           <li class="mt">
-            <a class="active" href="{% url 'home' %}">
+            <a class="{% if request.resolver_match.view_name ==  'home' %}active{% endif %}" href="{% url 'home' %}">
               <i class="fa fa-dashboard"></i>
               <span>Dashboard</span>
             </a>
           </li>
           <li class="sub-menu">
-            <a href="javascript:;">
+            <a href="javascript:;" class="{% if request.resolver_match.view_name ==  'transferOrder' or request.resolver_match.view_name == 'backload' or request.resolver_match.view_name == 'purchaseOrder' %}active{% endif %}">
               <i class="fa fa-shopping-basket"></i>
               <span>Inventory</span>
               </a>
@@ -81,7 +81,7 @@
             </ul>
           </li>
           <li class="sub-menu">
-            <a href="javascript:;">
+            <a class="{% if request.resolver_match.view_name ==  'manageItems' or  request.resolver_match.view_name == 'manageSuppliers' or request.resolver_match.view_name == 'manageCategories'%}active{% endif %}" href="javascript:;">
               <i class="fa fa-apple"></i>
               <span>Stocks</span>
               <span class="label label-danger pull-right mail-danger" id="warn" style="display: none"></span>
@@ -93,7 +93,7 @@
             </ul>
           </li>
           <li class="mt">
-            <a class="active" href="{% url 'sales' %}">
+            <a class="{% if request.resolver_match.view_name ==  'sales' %}active{% endif %}" href="{% url 'sales' %}">
               <i class="fa fa-money"></i>
               <span>Sales</span>
             </a>
@@ -115,22 +115,13 @@
 <script>
     initNotif();
     function openNotif() {
-        //$.get("{% url 'open_notifs' %}");
+        $.get("{% url 'open_notifs' %}");
         $("#notif_num").hide();
     }
     function initNotif(){
        let notif_data = $.get("{% url 'check_notifs' %}");
        notif_data.done(function(results){
        obj = results.data;
-       /*
-       <li>
-                <a href="index.html#">
-                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
-                  Server Overloaded.
-                  <span class="small italic">4 mins.</span>
-                  </a>
-              </li>
-       */
        for (i in obj){
 
        console.log(obj);
