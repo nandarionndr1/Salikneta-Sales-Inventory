@@ -20,7 +20,7 @@ def log_in_validate(request):
 
         user = request.POST.get('user')
         password = request.POST.get('password')
-        try1 = Cashier.objects.filter(username_doe,username=user, password=password).exists()
+        try1 = Cashier.objects.filter(username=user, password=password).exists()
         try2 = Manager.objects.filter(username=user, password=password).exists()
         if try1:
             request.session['username'] = user
@@ -29,7 +29,7 @@ def log_in_validate(request):
             request.session['userID'] = Cashier.objects.get(username=user, password=password).idCashier
             request.session['firstname'] = Cashier.objects.get(username=user, password=password).firstname
             request.session['lastname'] = Cashier.objects.get(username=user, password=password).lastname
-            return render(request, 'salikneta/home.html')
+            return redirect('home')
         elif try2: 
             request.session['username'] = user
             request.session['usertype'] = "manager"
@@ -38,13 +38,13 @@ def log_in_validate(request):
             request.session['userID'] = Manager.objects.get(username=user, password=password).idManager
             request.session['firstname'] = Manager.objects.get(username=user, password=password).firstname
             request.session['lastname'] = Manager.objects.get(username=user, password=password).lastname
-            return render(request, 'salikneta/home.html')
+            return redirect('home')
         else:
             messages.warning(request, 'Wrong credentials, please try again.')
    
     return render(request, 'salikneta/login.html')
 def home(request):
-    return render(request, 'salikneta/home.html')
+    return render(request, 'salikneta/home.html',{"notifs":Notifs.objects.all()})
 
 def get_num_lowstock(request):
     return JsonResponse({"numb":Product.get_num_lowstock_items()})
@@ -149,6 +149,22 @@ def editItemPrice(request):
         p.save()
         Notifs.write("Price for " +p.name+" has been updated.")
     return HttpResponseRedirect(reverse('manageItems'))
+def open_notif(request):
+    notifs = Notifs.objects.all()
+    for n in notifs:
+        n.viewed = 1
+        n.save()
+    return JsonResponse({"data": 'ok'})
+def check_notif(request):
+    notifs = Notifs.objects.all().order_by("-timestamp")[0:5]
+    chk = Notifs.check_num_new_notif()
+    data=[]
+    for n in notifs:
+        data.append({"num_notif":chk,
+                     "msg":n.msg
+                        ,"timestamp":n.get_time_ago})
+    return JsonResponse({"data": data})
+
 def pos(request):
     if request.method == 'POST':
         #create Sales invoice

@@ -52,6 +52,7 @@ class Notifs(models.Model):
     notif_id = models.AutoField(primary_key=True)
     msg = models.CharField(max_length=150, blank=True, null=True)
     timestamp = models.DateTimeField(blank=True, null=True)
+    viewed = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -76,6 +77,22 @@ class Notifs(models.Model):
     def write(message):
         n = Notifs(msg=message,timestamp=datetime.now())
         n.save()
+
+    @staticmethod
+    def check_new_notif():
+        for n in Notifs.objects.all():
+            if n.viewed == 0:
+                return True
+        return False
+
+    @staticmethod
+    def check_num_new_notif():
+        ctr=0
+        for n in Notifs.objects.all():
+            if n.viewed == 0:
+                ctr+=1
+        return ctr
+
 
 class Product(models.Model):
     idProduct = models.AutoField(primary_key=True)

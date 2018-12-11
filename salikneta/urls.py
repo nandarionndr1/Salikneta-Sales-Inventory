@@ -39,6 +39,9 @@ urlpatterns = [
     path('sales_report/', views.sales_report, name='sales_report'),
     path('sales_report_detail/', views.sales_report_detail, name='sales_report_detail'),
 
+    path('check_notifs/', views.check_notif, name='check_notifs'),
+    path('open_notifs/', views.open_notif, name='open_notifs'),
+
     path('get_num_low_items/', views.get_num_lowstock, name='get_num_lowstock'),
     path('ajax/get_invoicelines_by_salesid/<int:idSales>/', views.get_invoice_by_id, name='get_invoicelines_by_salesid'),
     path('ajax/ajaxAddCategory/', views.ajaxAddCategory, name='ajaxAddCategory'),
