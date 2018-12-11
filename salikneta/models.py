@@ -114,7 +114,6 @@ class Product(models.Model):
     @property
     def get_product_code(self):
         return self.idProduct + 1000
-
     @property
     def get_num_incoming(self):
         incoming = 0;
@@ -122,6 +121,28 @@ class Product(models.Model):
         for o in objs:
            incoming += o.qty - o.get_delivered_products_num
         return incoming
+
+    @staticmethod
+    def get_end_inventory(self, ed):
+        deliveries = 0
+        sales = 0
+        backloads = 0
+        deliv = Delivery.objects.filter(deliveryDate__gt=ed)
+        sals = SalesInvoice.objects.filter(invoiceDate__gt=ed)
+        bload = BackLoad.objects.filter(backloadDate_gt=ed)
+        for d in deliv:
+            for del_prods in d.get_delivered_products:
+                if del_prods.product == self:
+                    deliveries += del_prods.qty
+        for s in sals:
+            for il in InvoiceLines.objects.filter(idSales=s,idProduct_id=self.idProduct):
+                sales += il.qty
+        for b in bload:
+            for bl in BackloadLines.objects.filter(idBackload=b, idProduct_id=self.idProduct):
+              backloads += bl.qty
+
+        ct = (self.unitsInStock + deliveries)-(sales+backloads)
+        return ct
     @staticmethod
     def get_num_lowstock_items():
         ct = 0
@@ -161,13 +182,21 @@ class Delivery(models.Model):
     idDelivery = models.AutoField(primary_key=True)
     deliveryDate = models.DateField()
     idPurchaseOrder = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
-
+    @property
+    def get_delivered_products(self):
+        return DeliveredProducts.objects.filter(idDelivery=self)
 
 class DeliveredProducts(models.Model):
     idDeliveredProducts = models.AutoField(primary_key=True)
     idOrderLines = models.ForeignKey(OrderLines, on_delete=models.CASCADE)
     idDelivery = models.ForeignKey(Delivery, on_delete=models.CASCADE)
     qty = models.FloatField()
+    @property
+    def product(self):
+        return self.idOrderLines.idProduct
+    @property
+    def date_delivered(self):
+        return self.idDelivery.deliveryDate
 
 
 class SalesInvoice(models.Model):

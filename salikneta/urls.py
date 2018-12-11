@@ -39,6 +39,9 @@ urlpatterns = [
     path('sales_report/', views.sales_report, name='sales_report'),
     path('sales_report_detail/', views.sales_report_detail, name='sales_report_detail'),
 
+    path('inventory_report/', views.inventory_report, name='inventory_report'),
+    path('inventory_report_detail/', views.inventory_report_detail, name='inventory_report_detail'),
+
     path('check_notifs/', views.check_notif, name='check_notifs'),
     path('open_notifs/', views.open_notif, name='open_notifs'),
 

@@ -99,13 +99,13 @@
             </a>
           </li>
           <li class="sub-menu">
-            <a href="javascript:;">
+            <a class="{% if request.resolver_match.view_name ==  'sales_report' or request.resolver_match.view_name == 'inventory_report' %}active{% endif %}" href="javascript:;">
               <i class="fa fa-line-chart"></i>
               <span>Reports</span>
               </a>
             <ul class="sub">
               <li><a href="{% url 'sales_report' %}">Sales</a></li>
-              <li><a href="">Inventory</a></li>
+              <li><a href="{% url 'inventory_report' %}">Inventory</a></li>
             </ul>
           </li>
         </ul>
