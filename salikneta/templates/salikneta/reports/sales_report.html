@@ -20,6 +20,7 @@
                     <div class="col-md-4">
                         <h6>Date Range</h6>
                         <form action="{% url 'sales_report_detail' %}"  method="post">
+                            {% csrf_token %}
                                 <input type="hidden" name="type" value="range">
                                 <div class="input-group input-large" data-date="01/01/2014" data-date-format="mm/dd/yyyy">
                                   <input type="text" class="form-control dpd1" name="sd">
@@ -35,6 +36,7 @@
                     <div class="col-md-4" style="padding-right: 50px">
                         <h6>Monthly</h6>
                         <form action="{% url 'sales_report_detail' %}" name="month_report" id="month_report" method="post">
+                            {% csrf_token %}
                             <input type="hidden" name="type" value="month">
                             <div data-date-minviewmode="months" data-date-viewmode="years" data-date-format="mm-yyyy" data-date="12-2018" class="input-append date dpMonths">
                               <input type="text" readonly=""  m="" value="12-2018" size="16" name="month" class="form-control">
@@ -45,18 +47,20 @@
                             <span class="help-block">Select month only</span>
                             <input type="submit" id="month_submit" style="display: none;">
                             <center>
-                            <button type="button" name="activate" class="btn btn-primary btn-fill" >GENERATE</button>
+                            <button type="submit" name="activate" class="btn btn-primary btn-fill" >GENERATE</button>
                             </center>
                         </form>
                     </div>
                     <div class="col-md-4">
                         <h6>Daily</h6>
+                        {% csrf_token %}
                         <form action="{% url 'sales_report_detail' %}" name="day_report" id="day_report" method="post">
                             <input type="hidden" name="type" value="day">
                               <input class="form-control form-control-inline input-medium default-date-picker" name="date" size="16" type="text" value="">
                               <span class="help-block">Select date</span>
                             <center>
-                            <button type="button" name="activate" class="btn btn-primary btn-fill"  onClick="rep()" >GENERATE</button>
+                            <button type="submit" name="activate" class="btn btn-primary btn-fill"  onClick="rep()" >GENERATE</button>
+                            <button type="submit" name="activate" class="btn btn-primary btn-fill"  onClick="rep()" >GENERATE</button>
                             </center>
                         </form>
                     </div>
