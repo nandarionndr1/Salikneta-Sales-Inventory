@@ -30,6 +30,7 @@ urlpatterns = [
     path('manageCategories/', views.manageCategories, name='manageCategories'),
     path('manageSuppliers/', views.manageSuppliers, name='manageSuppliers'),
     path('manageItems/', views.manageItems, name='manageItems'),
+    path('editItemPrice/', views.editItemPrice, name='editItemPrice'),
     path('purchaseOrder/', views.purchaseOrder, name='purchaseOrder'),
     path('backload/', views.backload, name='backload'),
     path('transferOrder/', views.transferOrder, name='transferOrder'),

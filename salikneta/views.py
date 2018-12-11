@@ -20,7 +20,7 @@ def log_in_validate(request):
 
         user = request.POST.get('user')
         password = request.POST.get('password')
-        try1 = Cashier.objects.filter(username=user, password=password).exists()
+        try1 = Cashier.objects.filter(username_doe,username=user, password=password).exists()
         try2 = Manager.objects.filter(username=user, password=password).exists()
         if try1:
             request.session['username'] = user
@@ -68,6 +68,7 @@ def sales_report_detail(request):
     if request.method == 'POST':
         report_data = []
         new_rd = []
+        gen_info ={"message":"","total_qty":0,"total_sales":0}
         products = Product.objects.all()
         for p in products:
             report_data.append({"id":p.idProduct,
@@ -79,8 +80,9 @@ def sales_report_detail(request):
         if request.POST['type'] == "range":
             sd = request.POST["sd"].split("/")[2]+"-"+request.POST["sd"].split("/")[0]+"-"+request.POST["sd"].split("/")[1] + " 00:00:00"
             ed = request.POST["ed"].split("/")[2]+"-"+request.POST["ed"].split("/")[0]+"-"+request.POST["ed"].split("/")[1] + " 00:00:00"
-            sd = datetime.strptime(sd + " 00:00:00", '%Y-%m-%d %H:%M:%S')
-            ed = datetime.strptime(ed + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            gen_info["message"] = "From "+sd+" to "+ed
+            sd = datetime.strptime(sd, '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(ed, '%Y-%m-%d %H:%M:%S')
             si = SalesInvoice.objects.filter(invoiceDate__gte=sd, invoiceDate__lte=ed)
             for r in report_data:
                 for s in si:
@@ -89,12 +91,18 @@ def sales_report_detail(request):
                             r["total_qty"] += il.qty
                             r["total_value"] += il.unitPrice * il.qty
                             r["sold_value"] += il.get_net_price
+
+                            gen_info["total_sales"]+= il.get_net_price
+                            gen_info["total_qty"] += il.qty
             for r in report_data:
                 if r["total_qty"] != 0:
                     new_rd.append(r)
         elif request.POST['type'] == "month":
-            m = request.POST["month"].split("/")[1]+"-"+request.POST["month"].split("/")[0]+"-01 00:00:00"
+            print(request.POST["month"])
+            m = request.POST["month"].split("-")[1]+"-"+request.POST["month"].split("-")[0]+"-01 00:00:00"
+            m = datetime.strptime(m , '%Y-%m-%d %H:%M:%S')
             si = SalesInvoice.objects.filter(invoiceDate__year=m.year)
+            gen_info["message"] = "For the month of " + m.strftime('%B') + " " + str(m.year)
             for r in report_data:
                 for s in si:
                     if m.month == s.invoiceDate.month:
@@ -103,12 +111,17 @@ def sales_report_detail(request):
                                 r["total_qty"] += il.qty
                                 r["total_value"] += il.unitPrice * il.qty
                                 r["sold_value"] += il.get_net_price
+                                gen_info["total_sales"]+= il.get_net_price
+                                gen_info["total_qty"] += il.qty
             for r in report_data:
                 if r["total_qty"] != 0:
                     new_rd.append(r)
         elif request.POST['type'] == "day":
             sd = request.POST["date"].split("/")[2]+"-"+request.POST["date"].split("/")[0]+"-"+request.POST["date"].split("/")[1] + " 00:00:00"
             ed = request.POST["date"].split("/")[2] + "-" + request.POST["date"].split("/")[0] + "-" + request.POST["date"].split("/")[1] + " 23:59:59"
+            gen_info["message"] = "For "+request.POST["date"]
+            sd = datetime.strptime(sd, '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(ed, '%Y-%m-%d %H:%M:%S')
             si = SalesInvoice.objects.filter(invoiceDate__gte=sd, invoiceDate__lte=ed)
             for r in report_data:
                 for s in si:
@@ -117,20 +130,31 @@ def sales_report_detail(request):
                             r["total_qty"] += il.qty
                             r["total_value"] += il.unitPrice * il.qty
                             r["sold_value"] += il.get_net_price
+
+                            gen_info["total_sales"]+= il.get_net_price
+                            gen_info["total_qty"] += il.qty
             for r in report_data:
                 if r["total_qty"] != 0:
                     new_rd.append(r)
     else:
         return redirect('sales_report')
-    return render(request, 'salikneta/reports/sales_report_detail.html',{"report_data":new_rd})
-
+    return render(request, 'salikneta/reports/sales_report_detail.html',{"report_data":new_rd,"gen_info":gen_info})
+def editItemPrice(request):
+    if request.method == 'POST':
+        print("waaat",request.POST['item_price'])
+        print("waaat",request.POST['item_id'])
+        p = Product.objects.get(idProduct=request.POST['item_id'])
+        print("waaat",request.POST['item_price'])
+        p.suggestedUnitPrice = float(request.POST['item_price'])
+        p.save()
+        Notifs.write("Price for " +p.name+" has been updated.")
+    return HttpResponseRedirect(reverse('manageItems'))
 def pos(request):
     if request.method == 'POST':
         #create Sales invoice
-        si = SalesInvoice(invoiceDate=datetime.datetime.now(),
+        si = SalesInvoice(invoiceDate=datetime.now(),
                           customer="WALK-IN",
                           idCashier_id=1)# will replace to request.session['userID']
-
         ils =[]
         itms = []
         itms_dict ={}
@@ -145,7 +169,7 @@ def pos(request):
 
             prod = Product.objects.get(idProduct=item)
             il = InvoiceLines(qty=float(qtys[i]),
-                              unitPrice=prod.suggestedUnitPrice*float(qtys[i]),
+                              unitPrice=prod.suggestedUnitPrice,
                               disc=float(discs[i]),
                               idProduct_id=item
                               )
@@ -169,7 +193,7 @@ def pos(request):
         #loop the arrays
     return render(request, 'salikneta/pos/pos.html',{'products': Product.objects.all(),
                                                      'si_num':SalesInvoice.get_latest_invoice_num(),
-                                                     'date':datetime.datetime.now(),
+                                                     'date':datetime.now(),
                                                      'categories':Category.objects.all()})
 def signout(request):
     return redirect('index')
@@ -259,9 +283,11 @@ def manageItems(request):
     if request.method == 'POST':
         c = Product(name=request.POST['itemName'], description=request.POST['description'],
                     suggestedUnitPrice=request.POST['price'], unitsInStock=request.POST['startStock'],
-                    img_path=request.FILES['image'], reorderLevel=request.POST['reorder'], unitOfMeasure=request.POST['unitsOfMeasure'],
+                    img_path=request.FILES['image'], reorderLevel=request.POST['reorder'],unitOfMeasure=request.POST['unitsOfMeasure'],
                     SKU=request.POST['SKU'],idCategory_id=request.POST['category'])
         c.save()
+
+        Notifs.write("New Item -" +c.name+"- has been added.")
         return HttpResponseRedirect(reverse('manageItems'))
     return render(request, 'salikneta/manageItems.html',context)
 
@@ -402,8 +428,8 @@ def ajaxAddPurchaseOrder(request):
     expectedDate = request.GET.get('expectedDate')
 
 
-    po = PurchaseOrder(orderDate=datetime.datetime.strptime(orderDate, '%d-%m-%Y').strftime('%Y-%m-%d')
-    ,expectedDate=datetime.datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d')
+    po = PurchaseOrder(orderDate=datetime.strptime(orderDate, '%d-%m-%Y').strftime('%Y-%m-%d')
+    ,expectedDate=datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d')
     , idCashier_id=request.session['userID'], idSupplier_id = supplier,status="In Transit")
     po.save()
 
@@ -411,6 +437,8 @@ def ajaxAddPurchaseOrder(request):
     for x in range(0, len(products)):
         orderLine = OrderLines(qty=quantity[x],idProduct_id=products[x],idPurchaseOrder_id=po.pk)
         orderLine.save()
+
+    Notifs.write("New PO" + po.id + " has been added.")
     print("Success")
 
     return JsonResponse([], safe=False)
@@ -420,7 +448,7 @@ def ajaxAddBackload(request):
     quantity = request.GET.getlist('quantity[]')
     reasons = request.GET.getlist('reasons[]')
 
-    backloadDate = datetime.datetime.now().strftime("%Y-%m-%d")
+    backloadDate = datetime.now().strftime("%Y-%m-%d")
     b = BackLoad(backloadDate=backloadDate,idCashier_id=request.session['userID'])
     b.save()
 
@@ -432,6 +460,8 @@ def ajaxAddBackload(request):
         p.unitsInStock = p.unitsInStock - int(quantity[x]);
         print(p.unitsInStock)
         p.save()
+
+    Notifs.write("Products have been backloaded.")
     # po = PurchaseOrder(orderDate=datetime.datetime.strptime(orderDate, '%d-%m-%Y').strftime('%Y-%m-%d')
     # ,expectedDate=datetime.datetime.strptime(expectedDate, '%d-%m-%Y').strftime('%Y-%m-%d')
     # , idCashier_id=request.session['userID'], idSupplier_id = supplier,status="In Transit")
@@ -451,7 +481,7 @@ def ajaxSaveDelivery(request):
     lines = request.GET.getlist('lines[]')
     idPurchaseOrder = request.GET.get('idPurchaseOrder')
 
-    deliveryDate = datetime.datetime.now().strftime("%Y-%m-%d")
+    deliveryDate =datetime.now().strftime("%Y-%m-%d")
 
     d = Delivery(deliveryDate=deliveryDate,idPurchaseOrder_id=idPurchaseOrder)
     d.save()
@@ -461,11 +491,10 @@ def ajaxSaveDelivery(request):
         d1.save()
         p = Product.objects.get(pk=products[x])
 
-
         p.unitsInStock = int(p.unitsInStock) + int(quantity[x])
         p.save()
 
-    return HttpResponse()
+    return JsonResponse([],safe=False)
 
 
 def ajaxTransferOrder(request):
@@ -495,6 +524,5 @@ def ajaxTransferOrder(request):
         tl = TransferLines(qty=quantity[x],idProduct_id=products[x],idTransferOrder_id=to.pk)
         tl.save()
 
-
-
+    Notifs.write("Products have been delivered.")
     return JsonResponse([],safe=False)

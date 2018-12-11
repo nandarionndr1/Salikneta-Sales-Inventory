@@ -106,14 +106,51 @@
                 </div>
               </div>
             </div>
+              <div class="modal fade" id="modal_edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">EDIT ITEM PRICE</h4>
+                    </div>
+                  <form action="{% url 'editItemPrice' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_id" id="item_id" value="">
+                    <div class="modal-body">
+                      <div class="login-wrap">
+                          <div class="row">
+                           <div class="col-md-6">
+                             <label class="control-label">Name</label>
+                             <input type="text" class="form-control" id="e_itemName" name="itemName" placeholder="Item name" readonly>
+                           </div>
+                           <div class= "col-md-6">
+                              <label class="control-label">Product ID</label>
+                              <input  class="form-control" name="item_code" id="e_id">
+                              </input>
+                           </div>
+                         </div>
+
+                          <div class="row">
+                                <label class="control-label">Price</label>
+                                <input type="text" class="form-control" id="e_price" name="item_price" value="" >
+                          </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
 
 <section id="main-content">
       <section class="wrapper">
         <div class="row mt">
           <div class="col-lg-12">
             <div class="form-panel">
-              <h4 class="mb"><i class="fa fa-angle-right"></i> Items</h4>
-              <h4 class="mb"><i class="fa fa-angle-right"></i> Current Inventory for Items</h4>
+              <h4 class="mb"><i class="fa fa-apple"></i> Current Inventory for Items</h4>
               <button class="btn btn-success btn-md" data-toggle="modal" data-target="#myModal" style="margin-bottom: 1vh">Add Items</button>
 
                 <table id="itm_tbl" class="table table-bordered table-striped table-condensed">
@@ -132,7 +169,7 @@
                       <tr>
                         <td>{{product.name}}</td>
                         <td>{{product.idCategory.name}}</td>
-                        <td>{{product.suggestedUnitPrice}}</td>
+                          <td>{{product.suggestedUnitPrice}} <a href="#" data-toggle="modal" data-target="#modal_edit" item_code="{{ product.get_product_code }}" item_name="{{ product.name }}" item_price="{{ product.suggestedUnitPrice }}" item_id="{{ product.idProduct }}" onclick="editItem_Price(this)"><i class="fa fa-edit"></i></a></td>
                         <td>{{product.unitsInStock}}
                             {% if product.unitsInStock < product.reorderLevel %}
                                 <span class="label label-danger">LOW STOCK</span>
@@ -156,40 +193,14 @@
 </section>
   </section>
 </body>
+
 <script>
-    function addItem(){
-      var itemName = $("#itemName").val();
-      var category = $("#category").val();
-      var price = $("#price").val();
-      var SKU = $("#SKU").val();
-      var reorder = $("#reorder").val();
-      var unitsOfMeasure = $("#unitsOfMeasure").val();
-      var description = $("#description").val();
-      if(itemName != "" && category != "" &&price != "" && SKU != "" &&reorder != "" && unitsOfMeasure != "" &&description != ""){
-        alert("Nice");  
-        $.ajax({
-          url: '{% url "ajaxAddItem" %}',
-          data: {
-            "itemName":itemName,
-            "category":category,
-            "price":price,
-            "SKU":SKU,
-            "image":$("#image").val(),
-            "reorder":reorder,
-            "unitsOfMeasure":unitsOfMeasure,
-            "description":description,
-          },
-          dataType: 'json',
-          success: function(data){   
-          }  
-       });
+    function editItem_Price(obj){
 
-        var cat = $("#category option:selected").text();
-        wew = "<tr><td>" + itemName + "</td><td>" + cat + "</td><td>" + price + "</td><td>" + SKU +"</td><td>"+ reorder + "</td></tr>";
-        $("#itemsBody").append(wew);
-
-      }
-
+        $("#e_price").val($(obj).attr("item_price"));
+        $("#e_itemName").val($(obj).attr("item_name"));
+        $("#e_id").val($(obj).attr("item_code"));
+        $("#item_id").val($(obj).attr("item_id"));
 
     }
 </script>

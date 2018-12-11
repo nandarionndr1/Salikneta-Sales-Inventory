@@ -1,6 +1,9 @@
 from django.db import models
 
+from dateutil.relativedelta import relativedelta
 
+from datetime import datetime,timedelta
+import pytz
 # Create your models here.
 
 class Branch(models.Model):
@@ -45,6 +48,34 @@ class Category(models.Model):
     name = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
 
+class Notifs(models.Model):
+    notif_id = models.AutoField(primary_key=True)
+    msg = models.CharField(max_length=150, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'notifs'
+    @property
+    def get_time_ago(self):
+        utc = pytz.UTC
+        diff = relativedelta(datetime.now().replace(tzinfo=utc), self.timestamp.replace(tzinfo=utc), )
+        if diff.months == 0:
+            if diff.days == 0:
+                if diff.hours == 0:
+                    if diff.minutes == 0:
+                        return "moments ago"
+                    return str(diff.minutes) + " minutes ago"
+                else:
+                    return str(diff.hours) + " hours ago"
+            else:
+                return str(diff.days) + " days ago"
+        else:
+            return str(diff.months) + " months ago"
+    @staticmethod
+    def write(message):
+        n = Notifs(msg=message,timestamp=datetime.now())
+        n.save()
 
 class Product(models.Model):
     idProduct = models.AutoField(primary_key=True)
