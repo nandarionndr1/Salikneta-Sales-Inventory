@@ -50,7 +50,7 @@ class Product(models.Model):
     idProduct = models.AutoField(primary_key=True)
     name = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
-    suggestedUnitPrice = models.FloatField()
+    suggestedUnitPrice = models.FloatField()s
     unitsInStock = models.FloatField()
     unitsReserved = models.FloatField(default=0)
     reorderLevel = models.FloatField()

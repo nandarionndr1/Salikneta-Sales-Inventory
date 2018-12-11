@@ -253,7 +253,7 @@ def manageItems(request):
     if request.method == 'POST':
         c = Product(name=request.POST['itemName'], description=request.POST['description'],
                     suggestedUnitPrice=request.POST['price'], unitsInStock=request.POST['startStock'],
-                    img_path=request.FILES['image'], reorderLevel=request.POST['reorder'], unitOfMeasure=request.POST['unitsOfMeasure'],
+                    img_path=request.FILES['image'], reorderLevel=request.POST['reorder'],unitOfMeasure=request.POST['unitsOfMeasure'],
                     SKU=request.POST['SKU'],idCategory_id=request.POST['category'])
         c.save()
         return HttpResponseRedirect(reverse('manageItems'))
