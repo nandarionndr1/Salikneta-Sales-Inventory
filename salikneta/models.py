@@ -172,11 +172,18 @@ class OrderLines(models.Model):
     qty = models.FloatField()
 
     @property
+    def get_pending(self):
+        return self.qty - self.get_delivered_products_num 
+
+    @property
     def get_delivered_products_num(self):
         qty = 0
         for d in DeliveredProducts.objects.filter(idOrderLines=self.idOrderLines):
             qty += d.qty
         return qty
+
+    
+        
 
 class Delivery(models.Model):
     idDelivery = models.AutoField(primary_key=True)
@@ -286,6 +293,7 @@ class TransferOrder(models.Model):
     expectedDate = models.DateField()
     source = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="source")
     destination = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="destination")
+    status = models.CharField(max_length=50)
     @property
     def get_transfer_lines(self):
         return TransferLines.objects.filter(idTransferOrder=self.pk)
@@ -296,4 +304,6 @@ class TransferLines(models.Model):
     qty = models.FloatField()
     idTransferOrder = models.ForeignKey(TransferOrder, on_delete=models.CASCADE)
 
-
+    @property
+    def get_product(self):
+        return Product.objects.get(pk=int(self.idProduct.pk))

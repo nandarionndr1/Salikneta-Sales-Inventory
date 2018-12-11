@@ -56,6 +56,23 @@
                                       
                                   <h4>PURCHASE ORDER  #{{po.pk}}</h4>
 
+
+                                  {% if po.status == "In Transit" %}
+
+                                    <h5 style="color: blue;">{{po.status}}</h5>
+                                  {% endif %}
+
+                                  {% if po.status == "PARTIALLY RECEIVED" %}
+
+                                    <h5 style="color: grey;">{{po.status}}</h5>
+                                  {% endif %}
+                                  
+                                  {% if po.status == "RECEIVED" %}
+
+                                    <h5 style="color: green;">{{po.status}}</h5>
+                                  {% endif %}
+                                  
+
                               <div class="login-wrap">
                                 <div class="row">
                                   <div class="col-md-6">
@@ -99,6 +116,7 @@
                                         <tr>
                                           <th width="25%">Item name</th>
                                           <th>Qty ordered</th>
+                                          <th>Pending</th>
                                         </tr>
                                       </thead>
                                         
@@ -107,6 +125,7 @@
                                         <tr>
                                           <td>{{ o.idProduct.name }}</td>
                                           <td>{{ o.qty }}</td>
+                                          <td>{{ o.get_pending }}</td>
 
                                         </tr>
                                        
@@ -122,7 +141,9 @@
                                       <thead>
                                         <tr>
                                           <th width="25%">Item name</th>
+
                                           <th>Qty ordered</th>
+                                          <th>Pending</th>
                                           <th>Qty delivered</th>
                                         </tr>
                                       </thead>
@@ -130,8 +151,9 @@
                                         {% for o in po.get_orderLines %}
                                         <tr>
                                           <td class="{{o.pk}}">{{ o.idProduct.name }}</td>
-                                          <td>{{ o.qty }}</td>
-                                          <td><input class="form-control" type="number"/><span class="i{{o.idProduct.pk}}"></span></td>
+                                          <td>{{ o.qty}}</td>
+                                          <td>{{ o.get_pending}}</td>
+                                          <td><input class="form-control" type="number" value="1" /><span class="i{{o.idProduct.pk}}"></span></td>
                                         </tr>
 
 
@@ -150,7 +172,11 @@
                                 </div>
                                 <div class="modal-footer">
                                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                  <button type="button" id="receiveBtn{{po.pk}}" onclick="forDelivery('{{po.pk}}')" class="btn btn-success">Receive</button>
+                                  {% if po.status == "In Transit" or po.status == "PARTIALLY RECEIVED" %}
+
+                                    <button type="button" id="receiveBtn{{po.pk}}" onclick="forDelivery('{{po.pk}}')" class="btn btn-success">Receive</button>
+                                  {% endif %}
+
                                   <button type="button" id="saveBtn{{po.pk}}" onclick="saveDelivery('{{po.pk}}')" style="display: none;" class="btn btn-success">Save</button>
                                   <button type="button" id="printBtn{{po.pk}}" class="btn btn-primary" style="float: left;">Print</button>
                                 </div>
@@ -359,6 +385,7 @@ s
       success: function(data){  
         td.innerHTML = data[0].unitsInStock;
         t2.innerHTML = data[0].incoming;
+        console.log(data);
       }
       
    });
@@ -372,20 +399,20 @@ s
   }
 
   function saveDelivery(id){
-    alert("WEW");
 
     var tbl = document.getElementById("deliveryForm"+id);
     var rCount = tbl.rows.length; 
     var products = new Array();
     var qty = new Array();
+    var ordered = new Array();
     var lines = new Array();
 
     for(var i = 0; i < rCount; i++){
       lines.push(tbl.rows[i].cells[0].className);
-      
-      products.push((tbl.rows[i].cells[2].children[1].className).substr(1));
+      ordered.push(tbl.rows[i].cells[2].innerHTML);
+      products.push((tbl.rows[i].cells[3].children[1].className).substr(1));
 
-      qty.push(tbl.rows[i].cells[2].children[0].value);
+      qty.push(tbl.rows[i].cells[3].children[0].value);
     } 
 
 
@@ -397,11 +424,14 @@ s
         "products[]":products,  
         "quantity[]":qty,
         "lines[]":lines,
+        "ordered[]":ordered,
 
         "idPurchaseOrder":id,
       },
       dataType: 'json',
       success: function(data){  
+        alert("Items are successfully received");
+        window.location.href = "{% url 'purchaseOrder'%}";
       }
       
    });
