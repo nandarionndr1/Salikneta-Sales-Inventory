@@ -128,9 +128,11 @@ class Product(models.Model):
         deliveries = 0
         sales = 0
         backloads = 0
+        tos = 0
         deliv = Delivery.objects.filter(deliveryDate__gt=ed)
         sals = SalesInvoice.objects.filter(invoiceDate__gt=ed)
         bload = BackLoad.objects.filter(backloadDate__gt=ed)
+        to = TransferOrder.objects.filter(transferDate__gt=ed)
         for d in deliv:
             for del_prods in d.get_delivered_products:
                 if del_prods.product == self:
@@ -141,8 +143,12 @@ class Product(models.Model):
         for b in bload:
             for bl in BackloadLines.objects.filter(idBackload=b, idProduct_id=self.idProduct):
               backloads += bl.qty
+        for t in to:
+          for tl in t.get_transfer_lines:
+              if tl.idProduct_id == self.idProduct:
+                  tos += tl.qty
 
-        ct = (self.unitsInStock + deliveries)-(sales+backloads)
+        ct = (self.unitsInStock + deliveries)-(sales+backloads+tos)
         return ct
     @staticmethod
     def get_num_lowstock_items():

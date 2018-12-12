@@ -143,17 +143,14 @@ def sales_report_detail(request):
 
 def inventory_report(request):
     return render(request, 'salikneta/reports/inventory_report.html')
-def get_end_inv(ed,product_id):
-    dn = datetime.now()
-    product = product_id
 
-    return 0;
 def inventory_report_detail(request):
     if request.method == 'POST':
         report_data = []
         gen_info ={"message":"","total_sales_ct":0,
                    "total_deliveries":0,
-                   "total_backloads":0,}
+                   "total_backloads":0,
+                   "transfer_out": 0}
         products = Product.objects.all()
         for p in products:
             report_data.append({"id":p.idProduct,
@@ -161,6 +158,7 @@ def inventory_report_detail(request):
                                 "uom":p.unitOfMeasure,
                                 "unit_price":p.suggestedUnitPrice,
                                 "beg_inv":0,
+                                "transfer_out":0,
                                 "deliveries":0,
                                 "returns":0,
                                 "sales":0,
@@ -175,10 +173,12 @@ def inventory_report_detail(request):
             si = SalesInvoice.objects.filter(invoiceDate__gte=sd, invoiceDate__lte=ed)
             bload = BackLoad.objects.filter(backloadDate__gte=sd, backloadDate__lte=ed)
             deliv = Delivery.objects.filter(deliveryDate__gte=sd, deliveryDate__lte=ed)
+            to = TransferOrder.objects.filter(transferDate__gte=sd, transferDate__lte=ed)
             for r in report_data:
                 sl = 0
                 backloads = 0
                 deliveries = 0
+                tos = 0
                 r["end_inv"] = Product.get_end_inventory(Product.objects.get(idProduct=r["id"]), ed)
                 for d in deliv:
                     for del_prods in d.get_delivered_products:
@@ -193,10 +193,16 @@ def inventory_report_detail(request):
                     for bl in BackloadLines.objects.filter(idBackload=b, idProduct_id=r["id"]):
                         backloads += bl.qty
                         gen_info["total_backloads"] += bl.qty
+                for t in to:
+                    for tl in t.get_transfer_lines:
+                        if tl.idProduct_id == r["id"]:
+                            gen_info["transfer_out"] += tl.qty
+                            tos += tl.qty
 
-                r["beg_inv"] = (r["end_inv"] + sl + backloads) - deliveries
+                r["beg_inv"] = (r["end_inv"] + sl + backloads + tos) - deliveries
                 r["deliveries"] = deliveries
                 r["returns"] = backloads
+                r["transfer_out"] = tos
                 r["sales"] = sl
 
         elif request.POST['type'] == "month":
@@ -209,17 +215,24 @@ def inventory_report_detail(request):
             bload = BackLoad.objects.filter(backloadDate__gte=sd, backloadDate__lte=ed)
             deliv = Delivery.objects.filter(deliveryDate__gte=sd, deliveryDate__lte=ed)
 
+            to = TransferOrder.objects.filter(transferDate__gte=sd, transferDate__lte=ed)
             gen_info["message"] = "For the month of " + m.strftime('%B') + " " + str(m.year)
             for r in report_data:
                 sl = 0
                 backloads = 0
                 deliveries = 0
+                tos = 0
                 r["end_inv"] = Product.get_end_inventory(Product.objects.get(idProduct=r["id"]), ed)
                 for d in deliv:
                     for del_prods in d.get_delivered_products:
                         if del_prods.product.idProduct == r["id"]:
                             deliveries += del_prods.qty
                             gen_info["total_deliveries"] += del_prods.qty
+                for t in to:
+                    for tl in t.get_transfer_lines:
+                        if tl.idProduct_id == r["id"]:
+                            gen_info["transfer_out"] += tl.qty
+                            tos += tl.qty
 
                 for s in si:
                     for il in InvoiceLines.objects.filter(idSales=s):
@@ -232,9 +245,10 @@ def inventory_report_detail(request):
                             backloads += bl.qty
                         gen_info["total_backloads"] += bl.qty
 
-                r["beg_inv"] = (r["end_inv"] + sl + backloads) - deliveries
+                r["beg_inv"] = (r["end_inv"] + sl + backloads + tos) - deliveries
                 r["deliveries"] = deliveries
                 r["returns"] = backloads
+                r["transfer_out"] = tos
                 r["sales"] = sl
     else:
         return redirect('inventory_report')
@@ -271,7 +285,7 @@ def pos(request):
         #create Sales invoice
         si = SalesInvoice(invoiceDate=datetime.now(),
                           customer="WALK-IN",
-                          idCashier_id=1)# will replace to request.session['userID']
+                          idCashier_id=request.session['userID'])# will replace to request.session['userID']
         ils =[]
         itms = []
         itms_dict ={}

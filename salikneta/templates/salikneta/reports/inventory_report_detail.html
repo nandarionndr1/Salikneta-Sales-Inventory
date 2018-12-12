@@ -21,6 +21,7 @@
                         <h5>{{ gen_info.message }}</h5>
                         <h5>Total Deliveries: {{ gen_info.total_deliveries }}</h5>
                         <h5>Total Backloads: {{ gen_info.total_backloads }}</h5>
+                        <h5>Total Transfered Out: {{ gen_info.transfer_out }}</h5>
                         <h5>Total Sales Count: {{ gen_info.total_sales_ct }}</h5>
                 </div>
             <style>
@@ -46,6 +47,7 @@
                       <th>UOM</th>
                       <th>Beginning Inventory</th>
                       <th>Deliveries</th>
+                      <th>Transfered Out</th>
                       <th>Backloads</th>
                       <th>Sales</th>
                       <th>Ending Inventory</th>
@@ -59,6 +61,7 @@
                         <td class="cell_bdr txt_al_center" style="border: 1px solid black">{{ r.uom }}</td>
                         <td class="cell_bdr txt_al_right" style="border: 1px solid black">{{ r.beg_inv }}</td>
                         <td class="cell_bdr txt_al_right" style="border: 1px solid black">{{ r.deliveries }}</td>
+                        <td class="cell_bdr txt_al_right" style="border: 1px solid black">{{ r.transfer_out }}</td>
                         <td class="cell_bdr txt_al_right" style="border: 1px solid black">{{ r.returns }}</td>
                         <td class="cell_bdr txt_al_right" style="border: 1px solid black">{{ r.sales }}</td>
                         <td class="cell_bdr txt_al_right" style="border: 1px solid black">{{ r.end_inv }}</td>

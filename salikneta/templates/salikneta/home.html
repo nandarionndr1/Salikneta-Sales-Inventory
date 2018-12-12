@@ -21,6 +21,8 @@
             </div>
             <!-- /row -->
             <div class="row">
+
+          {% if request.session.usertype == 'cashier' %}
               <div class="col-md-4 mb">
                 <div class="twitter-panel pn">
                   <i class="fa fa-calculator fa-4x"></i>
@@ -28,6 +30,7 @@
                     <a href="{% url 'pos' %}"><button class="btn btn-small ">Navigate</button></a>
                 </div>
               </div>
+          {% endif %}
               <div class="col-md-4 mb">
                 <div class="twitter-panel pn">
                   <i class="fa fa-shopping-basket fa-4x"></i>

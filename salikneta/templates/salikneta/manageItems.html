@@ -157,6 +157,7 @@
                   <thead>
                     <tr>
                       <th>Name</th>
+                        <th>Description</th>
                       <th>Category</th>
                       <th>Suggested Price</th>
                       <th>Current Stocks</th>
@@ -168,6 +169,7 @@
                     {% for product in products %}
                       <tr>
                         <td>{{product.name}}</td>
+                      <td>{{ product.description }}</td>
                         <td>{{product.idCategory.name}}</td>
                           <td>{{product.suggestedUnitPrice}} <a href="#" data-toggle="modal" data-target="#modal_edit" item_code="{{ product.get_product_code }}" item_name="{{ product.name }}" item_price="{{ product.suggestedUnitPrice }}" item_id="{{ product.idProduct }}" onclick="editItem_Price(this)"><i class="fa fa-edit"></i></a></td>
                         <td>{{product.unitsInStock}}

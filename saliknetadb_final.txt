@@ -291,7 +291,34 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
+INSERT INTO `django_session` VALUES ('iog12eywxkcttp8bq18ugjzr02bt7xjt','MDM4ODkxYTM0MjNjNzA3Y2YyOWFhMGU0NDRlYjY2YzNmNDkxZmEyMjp7InVzZXJuYW1lIjoiY2FzaGllckBnbWFpbC5jb20iLCJ1c2VydHlwZSI6ImNhc2hpZXIiLCJsb2dnZWQiOnRydWUsInVzZXJJRCI6MiwiZmlyc3RuYW1lIjoiQ2hpbmdvbmEiLCJsYXN0bmFtZSI6IkNoYXNoaWVyIn0=','2018-12-26 19:37:45.569007');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notifs`
+--
+
+DROP TABLE IF EXISTS `notifs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifs` (
+  `notif_id` int(11) NOT NULL AUTO_INCREMENT,
+  `msg` varchar(150) DEFAULT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  `viewed` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`notif_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifs`
+--
+
+LOCK TABLES `notifs` WRITE;
+/*!40000 ALTER TABLE `notifs` DISABLE KEYS */;
+INSERT INTO `notifs` VALUES (26,'New Item -Apple- has been added.','2018-12-12 19:23:24',1),(27,'New Item -Tomato- has been added.','2018-12-12 19:24:05',1),(28,'New Item -Buko Shake- has been added.','2018-12-12 19:24:56',1),(29,'New Item -Rice Meal- has been added.','2018-12-12 19:25:44',1),(30,'New Item -Pork Liempo- has been added.','2018-12-12 19:26:29',1),(31,'New Item -Eggs- has been added.','2018-12-12 19:27:07',1),(32,'New Item -Eggplant- has been added.','2018-12-12 19:27:56',1),(33,'New PO37 has been added.','2018-12-12 19:56:00',NULL),(34,'New PO38 has been added.','2018-12-12 19:56:46',NULL),(35,'New PO39 has been added.','2018-12-12 19:57:49',NULL),(36,'New PO40 has been added.','2018-12-12 19:58:13',NULL),(37,'Products have been backloaded.','2018-12-12 19:59:34',NULL),(38,'Products have been delivered.','2018-12-12 20:00:03',NULL),(39,'Products have been delivered.','2018-12-12 20:00:46',NULL),(40,'Products have been delivered.','2018-12-12 20:01:21',NULL),(41,'Products have been delivered.','2018-12-12 20:01:38',NULL),(42,'Products have been backloaded.','2018-12-12 20:07:21',NULL),(43,'Products have been backloaded.','2018-12-12 20:07:45',NULL);
+/*!40000 ALTER TABLE `notifs` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -303,13 +330,12 @@ DROP TABLE IF EXISTS `salikneta_backload`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salikneta_backload` (
   `idBackload` int(11) NOT NULL AUTO_INCREMENT,
-  `reason` varchar(45) NOT NULL,
   `backloadDate` date NOT NULL,
   `idCashier_id` int(11) NOT NULL,
   PRIMARY KEY (`idBackload`),
   KEY `salikneta_backload_idCashier_id_139ac1e7_fk_salikneta` (`idCashier_id`),
   CONSTRAINT `salikneta_backload_idCashier_id_139ac1e7_fk_salikneta` FOREIGN KEY (`idCashier_id`) REFERENCES `salikneta_cashier` (`idCashier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,6 +344,7 @@ CREATE TABLE `salikneta_backload` (
 
 LOCK TABLES `salikneta_backload` WRITE;
 /*!40000 ALTER TABLE `salikneta_backload` DISABLE KEYS */;
+INSERT INTO `salikneta_backload` VALUES (14,'2018-12-12',2),(15,'2018-12-12',2),(16,'2018-12-12',2);
 /*!40000 ALTER TABLE `salikneta_backload` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -332,10 +359,14 @@ CREATE TABLE `salikneta_backloadlines` (
   `idBackloadLines` int(11) NOT NULL AUTO_INCREMENT,
   `qty` double NOT NULL,
   `idProduct_id` int(11) NOT NULL,
+  `reason` varchar(45) DEFAULT NULL,
+  `idBackload` int(11) DEFAULT NULL,
   PRIMARY KEY (`idBackloadLines`),
   KEY `salikneta_backloadli_idProduct_id_dcecf50b_fk_salikneta` (`idProduct_id`),
+  KEY `idBackload_idx` (`idBackload`),
+  CONSTRAINT `idBackload` FOREIGN KEY (`idBackload`) REFERENCES `salikneta_backload` (`idBackload`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `salikneta_backloadli_idProduct_id_dcecf50b_fk_salikneta` FOREIGN KEY (`idProduct_id`) REFERENCES `salikneta_product` (`idProduct`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,6 +375,7 @@ CREATE TABLE `salikneta_backloadlines` (
 
 LOCK TABLES `salikneta_backloadlines` WRITE;
 /*!40000 ALTER TABLE `salikneta_backloadlines` DISABLE KEYS */;
+INSERT INTO `salikneta_backloadlines` VALUES (13,5,4,'Expired',14),(14,4,7,'Expired',15),(15,2,6,'Dirty',15),(16,1,4,'Expired',16),(17,1,7,'Expired',16),(18,1,6,'Expired',16);
 /*!40000 ALTER TABLE `salikneta_backloadlines` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -358,7 +390,7 @@ CREATE TABLE `salikneta_branch` (
   `idBranch` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   PRIMARY KEY (`idBranch`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -367,6 +399,7 @@ CREATE TABLE `salikneta_branch` (
 
 LOCK TABLES `salikneta_branch` WRITE;
 /*!40000 ALTER TABLE `salikneta_branch` DISABLE KEYS */;
+INSERT INTO `salikneta_branch` VALUES (1,'SM'),(2,'Araneta');
 /*!40000 ALTER TABLE `salikneta_branch` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -387,7 +420,7 @@ CREATE TABLE `salikneta_cashier` (
   PRIMARY KEY (`idCashier`),
   KEY `salikneta_cashier_idBranch_id_9067f2ad_fk_salikneta` (`idBranch_id`),
   CONSTRAINT `salikneta_cashier_idBranch_id_9067f2ad_fk_salikneta` FOREIGN KEY (`idBranch_id`) REFERENCES `salikneta_branch` (`idBranch`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -396,6 +429,7 @@ CREATE TABLE `salikneta_cashier` (
 
 LOCK TABLES `salikneta_cashier` WRITE;
 /*!40000 ALTER TABLE `salikneta_cashier` DISABLE KEYS */;
+INSERT INTO `salikneta_cashier` VALUES (2,'Chingona','Chashier','cashier@gmail.com','123',1),(3,'Manaloto','Managing','cashier2@gmail.com','123',1);
 /*!40000 ALTER TABLE `salikneta_cashier` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -411,7 +445,7 @@ CREATE TABLE `salikneta_category` (
   `name` varchar(45) NOT NULL,
   `description` varchar(45) NOT NULL,
   PRIMARY KEY (`idCategory`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -420,6 +454,7 @@ CREATE TABLE `salikneta_category` (
 
 LOCK TABLES `salikneta_category` WRITE;
 /*!40000 ALTER TABLE `salikneta_category` DISABLE KEYS */;
+INSERT INTO `salikneta_category` VALUES (5,'Poultry','Mga baboy na kakanin'),(6,'Fruits','Prutas at sibuyas'),(7,'Vegetable','Gulay at kamatis'),(8,'Special Item','Special menu'),(9,'Beverages','Inumin');
 /*!40000 ALTER TABLE `salikneta_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -440,7 +475,7 @@ CREATE TABLE `salikneta_deliveredproducts` (
   KEY `salikneta_deliveredp_idOrderLines_id_a6877487_fk_salikneta` (`idOrderLines_id`),
   CONSTRAINT `salikneta_deliveredp_idDelivery_id_f95a6dc8_fk_salikneta` FOREIGN KEY (`idDelivery_id`) REFERENCES `salikneta_delivery` (`idDelivery`),
   CONSTRAINT `salikneta_deliveredp_idOrderLines_id_a6877487_fk_salikneta` FOREIGN KEY (`idOrderLines_id`) REFERENCES `salikneta_orderlines` (`idOrderLines`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -449,6 +484,7 @@ CREATE TABLE `salikneta_deliveredproducts` (
 
 LOCK TABLES `salikneta_deliveredproducts` WRITE;
 /*!40000 ALTER TABLE `salikneta_deliveredproducts` DISABLE KEYS */;
+INSERT INTO `salikneta_deliveredproducts` VALUES (44,25,48,37),(45,50,49,38),(46,1,49,39),(47,100,50,41);
 /*!40000 ALTER TABLE `salikneta_deliveredproducts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -466,7 +502,7 @@ CREATE TABLE `salikneta_delivery` (
   PRIMARY KEY (`idDelivery`),
   KEY `salikneta_delivery_idPurchaseOrder_id_80bf84f2_fk_salikneta` (`idPurchaseOrder_id`),
   CONSTRAINT `salikneta_delivery_idPurchaseOrder_id_80bf84f2_fk_salikneta` FOREIGN KEY (`idPurchaseOrder_id`) REFERENCES `salikneta_purchaseorder` (`idPurchaseOrder`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -475,6 +511,7 @@ CREATE TABLE `salikneta_delivery` (
 
 LOCK TABLES `salikneta_delivery` WRITE;
 /*!40000 ALTER TABLE `salikneta_delivery` DISABLE KEYS */;
+INSERT INTO `salikneta_delivery` VALUES (48,'2018-12-12',37),(49,'2018-12-12',38),(50,'2018-12-12',40);
 /*!40000 ALTER TABLE `salikneta_delivery` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -486,14 +523,18 @@ DROP TABLE IF EXISTS `salikneta_invoicelines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salikneta_invoicelines` (
-  `idSales` int(11) NOT NULL AUTO_INCREMENT,
-  `unitPrice` varchar(45) NOT NULL,
+  `idInvoiceLines` int(11) NOT NULL AUTO_INCREMENT,
+  `unitPrice` double NOT NULL,
   `qty` double NOT NULL,
   `idProduct_id` int(11) NOT NULL,
-  PRIMARY KEY (`idSales`),
+  `disc` float DEFAULT NULL,
+  `idSales` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idInvoiceLines`),
   KEY `salikneta_invoicelin_idProduct_id_ea44a6fb_fk_salikneta` (`idProduct_id`),
+  KEY `idSales_idx` (`idSales`),
+  CONSTRAINT `idSales` FOREIGN KEY (`idSales`) REFERENCES `salikneta_salesinvoice` (`idSales`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `salikneta_invoicelin_idProduct_id_ea44a6fb_fk_salikneta` FOREIGN KEY (`idProduct_id`) REFERENCES `salikneta_product` (`idProduct`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -502,6 +543,7 @@ CREATE TABLE `salikneta_invoicelines` (
 
 LOCK TABLES `salikneta_invoicelines` WRITE;
 /*!40000 ALTER TABLE `salikneta_invoicelines` DISABLE KEYS */;
+INSERT INTO `salikneta_invoicelines` VALUES (5,30,5,4,20,6),(6,20,0.5,5,0,6),(7,160,0.75,8,0,6),(8,30,2,4,0,7),(9,65,5,7,5,7),(10,15,3,9,0,7),(11,78,4,6,0,8),(12,30,20,10,15,9),(13,20,10,5,0,10),(14,15,10,9,0,10),(15,65,5,7,10,11),(16,30,3,4,10,11),(17,78,2,6,0,11),(18,15,5,9,0,12),(19,65,20,7,20,12),(20,65,30,7,0,13),(21,30,10,4,0,13),(22,20,10,5,0,13),(23,78,5,6,0,13),(24,30,15,10,0,13),(25,30,17,4,10,14),(26,160,0.8,8,0,14),(27,160,0.5,8,10,15),(28,78,3,6,0,15),(29,20,19.5,5,0,16),(30,78,5,6,0,16),(31,160,7.25,8,0,17),(32,65,20,7,0,17),(33,78,1,6,4,17),(34,160,5.555,8,0,18),(35,15,7,9,0,18);
 /*!40000 ALTER TABLE `salikneta_invoicelines` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -522,7 +564,7 @@ CREATE TABLE `salikneta_manager` (
   PRIMARY KEY (`idManager`),
   KEY `salikneta_manager_idBranch_id_73d50c80_fk_salikneta` (`idBranch_id`),
   CONSTRAINT `salikneta_manager_idBranch_id_73d50c80_fk_salikneta` FOREIGN KEY (`idBranch_id`) REFERENCES `salikneta_branch` (`idBranch`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -531,6 +573,7 @@ CREATE TABLE `salikneta_manager` (
 
 LOCK TABLES `salikneta_manager` WRITE;
 /*!40000 ALTER TABLE `salikneta_manager` DISABLE KEYS */;
+INSERT INTO `salikneta_manager` VALUES (3,'Managing','Manarot','manager@gmail.com','123',1);
 /*!40000 ALTER TABLE `salikneta_manager` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -551,7 +594,7 @@ CREATE TABLE `salikneta_orderlines` (
   KEY `salikneta_orderlines_idPurchaseOrder_id_e0150586_fk_salikneta` (`idPurchaseOrder_id`),
   CONSTRAINT `salikneta_orderlines_idProduct_id_669c2cc2_fk_salikneta` FOREIGN KEY (`idProduct_id`) REFERENCES `salikneta_product` (`idProduct`),
   CONSTRAINT `salikneta_orderlines_idPurchaseOrder_id_e0150586_fk_salikneta` FOREIGN KEY (`idPurchaseOrder_id`) REFERENCES `salikneta_purchaseorder` (`idPurchaseOrder`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -560,6 +603,7 @@ CREATE TABLE `salikneta_orderlines` (
 
 LOCK TABLES `salikneta_orderlines` WRITE;
 /*!40000 ALTER TABLE `salikneta_orderlines` DISABLE KEYS */;
+INSERT INTO `salikneta_orderlines` VALUES (37,50,4,37),(38,50,5,38),(39,50,6,38),(40,50,10,39),(41,100,7,40);
 /*!40000 ALTER TABLE `salikneta_orderlines` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -575,17 +619,18 @@ CREATE TABLE `salikneta_product` (
   `name` varchar(45) NOT NULL,
   `description` varchar(45) NOT NULL,
   `suggestedUnitPrice` double NOT NULL,
-  `unitsInStock` int(11) NOT NULL,
+  `unitsInStock` float NOT NULL,
   `reorderLevel` int(11) NOT NULL,
   `unitOfMeasure` varchar(45) NOT NULL,
   `SKU` int(11) NOT NULL,
   `barcode` varchar(45) NOT NULL,
   `img_path` varchar(150) DEFAULT NULL,
   `idCategory_id` int(11) NOT NULL,
+  `unitsReserved` int(11) DEFAULT NULL,
   PRIMARY KEY (`idProduct`),
   KEY `salikneta_product_idCategory_id_e88bfcb9_fk_salikneta` (`idCategory_id`),
   CONSTRAINT `salikneta_product_idCategory_id_e88bfcb9_fk_salikneta` FOREIGN KEY (`idCategory_id`) REFERENCES `salikneta_category` (`idCategory`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -594,6 +639,7 @@ CREATE TABLE `salikneta_product` (
 
 LOCK TABLES `salikneta_product` WRITE;
 /*!40000 ALTER TABLE `salikneta_product` DISABLE KEYS */;
+INSERT INTO `salikneta_product` VALUES (4,'Apple','Fresh Fuji Apple',30,14,40,'PCS',30,'','prod_img/download_fqnDSey.jpeg',6,5),(5,'Tomato','Tomato Fresh',20,54,40,'KGS',30,'','prod_img/download_1_C9aV9Ow.jpeg',7,0),(6,'Buko Shake','Buko Flavored Shake',78,7,30,'PCS',123,'','prod_img/download_2.jpeg',9,0),(7,'Rice Meal','Rice W/ Rice',65,115,50,'PCS',30,'','prod_img/download_3.jpeg',5,0),(8,'Pork Liempo','Pork Cut Liempo',160,29,30,'KGS',300,'','prod_img/download_4.jpeg',5,5),(9,'Eggs','Golden Eggs',15,15,40,'PCS',10,'','prod_img/download_5.jpeg',8,0),(10,'Eggplant','Raw Talong',30,13,30,'LBS',30,'','prod_img/basket.jpg',7,0);
 /*!40000 ALTER TABLE `salikneta_product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -610,12 +656,13 @@ CREATE TABLE `salikneta_purchaseorder` (
   `expectedDate` date NOT NULL,
   `idCashier_id` int(11) NOT NULL,
   `idSupplier_id` int(11) NOT NULL,
+  `status` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idPurchaseOrder`),
   KEY `salikneta_purchaseor_idCashier_id_eb9363f7_fk_salikneta` (`idCashier_id`),
   KEY `salikneta_purchaseor_idSupplier_id_f69c233c_fk_salikneta` (`idSupplier_id`),
   CONSTRAINT `salikneta_purchaseor_idCashier_id_eb9363f7_fk_salikneta` FOREIGN KEY (`idCashier_id`) REFERENCES `salikneta_cashier` (`idCashier`),
   CONSTRAINT `salikneta_purchaseor_idSupplier_id_f69c233c_fk_salikneta` FOREIGN KEY (`idSupplier_id`) REFERENCES `salikneta_supplier` (`idSupplier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -624,6 +671,7 @@ CREATE TABLE `salikneta_purchaseorder` (
 
 LOCK TABLES `salikneta_purchaseorder` WRITE;
 /*!40000 ALTER TABLE `salikneta_purchaseorder` DISABLE KEYS */;
+INSERT INTO `salikneta_purchaseorder` VALUES (37,'2018-01-01','2014-01-01',2,2,'PARTIALLY RECEIVED'),(38,'2014-01-01','2014-01-01',2,2,'PARTIALLY RECEIVED'),(39,'2014-01-01','2014-01-01',2,3,'In Transit'),(40,'2014-01-01','2014-01-01',2,3,'RECEIVED');
 /*!40000 ALTER TABLE `salikneta_purchaseorder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -636,13 +684,13 @@ DROP TABLE IF EXISTS `salikneta_salesinvoice`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salikneta_salesinvoice` (
   `idSales` int(11) NOT NULL AUTO_INCREMENT,
-  `invoiceDate` date NOT NULL,
+  `invoiceDate` datetime NOT NULL,
   `customer` varchar(45) NOT NULL,
   `idCashier_id` int(11) NOT NULL,
   PRIMARY KEY (`idSales`),
   KEY `salikneta_salesinvoi_idCashier_id_5b7305bb_fk_salikneta` (`idCashier_id`),
   CONSTRAINT `salikneta_salesinvoi_idCashier_id_5b7305bb_fk_salikneta` FOREIGN KEY (`idCashier_id`) REFERENCES `salikneta_cashier` (`idCashier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -651,6 +699,7 @@ CREATE TABLE `salikneta_salesinvoice` (
 
 LOCK TABLES `salikneta_salesinvoice` WRITE;
 /*!40000 ALTER TABLE `salikneta_salesinvoice` DISABLE KEYS */;
+INSERT INTO `salikneta_salesinvoice` VALUES (6,'2018-11-12 19:38:58','WALK-IN',2),(7,'2018-11-12 19:39:54','WALK-IN',2),(8,'2018-11-15 19:40:41','WALK-IN',2),(9,'2018-11-16 19:41:10','WALK-IN',2),(10,'2018-11-16 19:41:27','WALK-IN',2),(11,'2018-12-09 19:42:09','WALK-IN',2),(12,'2018-12-09 19:42:24','WALK-IN',2),(13,'2018-12-10 19:43:18','WALK-IN',2),(14,'2018-12-10 19:44:40','WALK-IN',2),(15,'2018-12-10 19:46:12','WALK-IN',2),(16,'2018-12-12 19:46:41','WALK-IN',2),(17,'2018-12-12 19:47:21','WALK-IN',2),(18,'2018-12-12 19:48:22','WALK-IN',2);
 /*!40000 ALTER TABLE `salikneta_salesinvoice` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -674,7 +723,7 @@ CREATE TABLE `salikneta_supplier` (
   `country` varchar(45) NOT NULL,
   `postal` varchar(45) NOT NULL,
   PRIMARY KEY (`idSupplier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -683,6 +732,7 @@ CREATE TABLE `salikneta_supplier` (
 
 LOCK TABLES `salikneta_supplier` WRITE;
 /*!40000 ALTER TABLE `salikneta_supplier` DISABLE KEYS */;
+INSERT INTO `salikneta_supplier` VALUES (2,'Salikneta Farm','123','a@gmail.com','www.aran.com','Makati','Navotas','Tanza','Metro Manila','Philippines','7000'),(3,'San Miguel','09055123','123@gmail.com','www.smiguel.com','Makati','Mandaluyong','Mandakati','Metro Manila','Philippines','233');
 /*!40000 ALTER TABLE `salikneta_supplier` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -694,13 +744,16 @@ DROP TABLE IF EXISTS `salikneta_transferlines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salikneta_transferlines` (
-  `idTransferOrder` int(11) NOT NULL AUTO_INCREMENT,
+  `idTransferLines` int(11) NOT NULL AUTO_INCREMENT,
   `qty` double NOT NULL,
   `idProduct_id` int(11) NOT NULL,
-  PRIMARY KEY (`idTransferOrder`),
+  `idTransferOrder_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idTransferLines`),
   KEY `salikneta_transferli_idProduct_id_7e465771_fk_salikneta` (`idProduct_id`),
+  KEY `idTransferOrder_idx` (`idTransferOrder_id`),
+  CONSTRAINT `idTransferOrder` FOREIGN KEY (`idTransferOrder_id`) REFERENCES `salikneta_transferorder` (`idTransferOrder`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `salikneta_transferli_idProduct_id_7e465771_fk_salikneta` FOREIGN KEY (`idProduct_id`) REFERENCES `salikneta_product` (`idProduct`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -709,6 +762,7 @@ CREATE TABLE `salikneta_transferlines` (
 
 LOCK TABLES `salikneta_transferlines` WRITE;
 /*!40000 ALTER TABLE `salikneta_transferlines` DISABLE KEYS */;
+INSERT INTO `salikneta_transferlines` VALUES (13,10,4,16),(14,5,5,17),(15,5,9,17),(16,2,10,17),(17,5,4,18),(18,5,8,18),(19,5,9,18),(20,5,4,19),(21,5,8,19);
 /*!40000 ALTER TABLE `salikneta_transferlines` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -724,10 +778,17 @@ CREATE TABLE `salikneta_transferorder` (
   `transferDate` date NOT NULL,
   `expectedDate` date NOT NULL,
   `idCashier_id` int(11) NOT NULL,
+  `source_id` int(11) DEFAULT NULL,
+  `destination_id` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`idTransferOrder`),
   KEY `salikneta_transferor_idCashier_id_f3b5c182_fk_salikneta` (`idCashier_id`),
-  CONSTRAINT `salikneta_transferor_idCashier_id_f3b5c182_fk_salikneta` FOREIGN KEY (`idCashier_id`) REFERENCES `salikneta_cashier` (`idCashier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `source_idx` (`source_id`),
+  KEY `destination_idx` (`destination_id`),
+  CONSTRAINT `destination` FOREIGN KEY (`destination_id`) REFERENCES `salikneta_branch` (`idBranch`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `salikneta_transferor_idCashier_id_f3b5c182_fk_salikneta` FOREIGN KEY (`idCashier_id`) REFERENCES `salikneta_cashier` (`idCashier`),
+  CONSTRAINT `source` FOREIGN KEY (`source_id`) REFERENCES `salikneta_branch` (`idBranch`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -736,6 +797,7 @@ CREATE TABLE `salikneta_transferorder` (
 
 LOCK TABLES `salikneta_transferorder` WRITE;
 /*!40000 ALTER TABLE `salikneta_transferorder` DISABLE KEYS */;
+INSERT INTO `salikneta_transferorder` VALUES (16,'2018-01-01','2018-01-01',2,1,2,'Finished'),(17,'2018-01-01','2018-01-01',2,1,2,'In Transit'),(18,'2018-01-01','2018-01-01',2,1,2,'Cancelled'),(19,'2018-01-01','2018-01-01',2,1,2,'Draft');
 /*!40000 ALTER TABLE `salikneta_transferorder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -752,4 +814,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-08 17:06:54
+-- Dump completed on 2018-12-12 20:36:41

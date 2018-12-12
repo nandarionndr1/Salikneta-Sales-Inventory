@@ -27,11 +27,13 @@
               <i class="fa fa-dashboard"></i>
             </a>
           </li>
+          {% if request.session.usertype == 'cashier' %}
           <li class="dropdown">
             <a  class="dropdown-toggle" href="{% url 'pos' %}">
               <i class="fa fa-calculator"></i>
             </a>
           </li>
+        {% endif %}
           <!-- settings end -->
           <!-- notification dropdown start-->
           <li id="header_notification_bar" class="dropdown">
