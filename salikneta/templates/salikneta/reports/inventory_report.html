@@ -17,22 +17,6 @@
             <div class="form-panel">
               <h4 class="mb"><i class="fa fa-line-chart"></i> Generate Inventory Report</h4>
                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Date Range</h6>
-                        <form action="{% url 'inventory_report_detail' %}"  method="post">
-                            {% csrf_token %}
-                                <input type="hidden" name="type" value="range">
-                                <div class="input-group input-large" data-date="01/01/2014" data-date-format="mm/dd/yyyy">
-                                  <input type="text" class="form-control dpd1" name="sd">
-                                  <span class="input-group-addon">To</span>
-                                  <input type="text" class="form-control dpd2" name="ed">
-                                </div>
-                                <span class="help-block">Select date range</span>
-                            <center>
-                            <input type="submit" name="activate" class="btn btn-primary btn-fill" value="GENERATE" />
-                            </center>
-                        </form>
-                    </div>
                     <div class="col-md-6" style="padding-right: 50px">
                         <h6>Monthly</h6>
                         <form action="{% url 'inventory_report_detail' %}" name="month_report" id="month_report" method="post">
@@ -48,6 +32,22 @@
                             <input type="submit" id="month_submit" style="display: none;">
                             <center>
                             <button type="submit" name="activate" class="btn btn-primary btn-fill" >GENERATE</button>
+                            </center>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Date Range</h6>
+                        <form action="{% url 'inventory_report_detail' %}"  method="post">
+                            {% csrf_token %}
+                                <input type="hidden" name="type" value="range">
+                                <div class="input-group input-large" data-date="01/01/2014" data-date-format="mm/dd/yyyy">
+                                  <input type="text" class="form-control dpd1" name="sd">
+                                  <span class="input-group-addon">To</span>
+                                  <input type="text" class="form-control dpd2" name="ed">
+                                </div>
+                                <span class="help-block">Select date range</span>
+                            <center>
+                            <input type="submit" name="activate" class="btn btn-primary btn-fill" value="GENERATE" />
                             </center>
                         </form>
                     </div>

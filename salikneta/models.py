@@ -124,12 +124,13 @@ class Product(models.Model):
 
     @staticmethod
     def get_end_inventory(self, ed):
+
         deliveries = 0
         sales = 0
         backloads = 0
         deliv = Delivery.objects.filter(deliveryDate__gt=ed)
         sals = SalesInvoice.objects.filter(invoiceDate__gt=ed)
-        bload = BackLoad.objects.filter(backloadDate_gt=ed)
+        bload = BackLoad.objects.filter(backloadDate__gt=ed)
         for d in deliv:
             for del_prods in d.get_delivered_products:
                 if del_prods.product == self:

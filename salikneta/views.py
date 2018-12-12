@@ -151,14 +151,13 @@ def get_end_inv(ed,product_id):
 def inventory_report_detail(request):
     if request.method == 'POST':
         report_data = []
-        new_rd = []
         gen_info ={"message":""}
         products = Product.objects.all()
         for p in products:
             report_data.append({"id":p.idProduct,
                                 "product": p.name,
                                 "uom":p.description,
-                                "unit price":p.suggestedUnitPrice,
+                                "unit_price":p.suggestedUnitPrice,
                                 "beg_inv":0,
                                 "deliveries":0,
                                 "returns":0,
@@ -170,13 +169,14 @@ def inventory_report_detail(request):
             gen_info["message"] = "From "+sd+" to "+ed
             sd = datetime.strptime(sd, '%Y-%m-%d %H:%M:%S')
             ed = datetime.strptime(ed, '%Y-%m-%d %H:%M:%S')
-            sl = 0
-            backloads = 0
-            deliveries = 0
+
             si = SalesInvoice.objects.filter(invoiceDate__gte=sd, invoiceDate__lte=ed)
-            bload = BackLoad.objects.filter(backloadDate_gte=sd, backloadDate_lte=ed)
+            bload = BackLoad.objects.filter(backloadDate__gte=sd, backloadDate__lte=ed)
             deliv = Delivery.objects.filter(deliveryDate__gte=sd, deliveryDate__lte=ed)
             for r in report_data:
+                sl = 0
+                backloads = 0
+                deliveries = 0
                 r["end_inv"] = Product.get_end_inventory(Product.objects.get(idProduct=r["id"]), ed)
                 for d in deliv:
                     for del_prods in d.get_delivered_products:
@@ -186,7 +186,7 @@ def inventory_report_detail(request):
                     for il in InvoiceLines.objects.filter(idSales=s, idProduct_id=r["id"]):
                         sl += il.qty
                 for b in bload:
-                    for bl in BackloadLines.objects.filter(idBackload=b, idProduct_id=self.idProduct):
+                    for bl in BackloadLines.objects.filter(idBackload=b, idProduct_id=r["id"]):
                         backloads += bl.qty
 
                 r["beg_inv"] = (r["end_inv"] + sl + backloads) - deliveries
@@ -197,29 +197,32 @@ def inventory_report_detail(request):
         elif request.POST['type'] == "month":
             m = request.POST["month"].split("-")[1]+"-"+request.POST["month"].split("-")[0]+"-01 00:00:00"
             m = datetime.strptime(m , '%Y-%m-%d %H:%M:%S')
-            sd = request.POST["month"].split("-")[1]+"-"+request.POST["month"].split("-")[0]+"-01 00:00:00"
-            ed = request.POST["month"].split("-")[1]+"-"+request.POST["month"].split("-")[0]+"-"+calendar.monthrange(m.year, m.month)[1]+" 00:00:00"
+            sd = request.POST["month"].split("-")[1]+"-"+request.POST["month"].split("-")[0]+"-01"
+            ed = request.POST["month"].split("-")[1]+"-"+request.POST["month"].split("-")[0]+"-"+str(calendar.monthrange(m.year, m.month)[1])
 
-            sl = 0
-            backloads = 0
-            deliveries = 0
             si = SalesInvoice.objects.filter(invoiceDate__gte=sd, invoiceDate__lte=ed)
-            bload = BackLoad.objects.filter(backloadDate_gte=sd, backloadDate_lte=ed)
+            bload = BackLoad.objects.filter(backloadDate__gte=sd, backloadDate__lte=ed)
             deliv = Delivery.objects.filter(deliveryDate__gte=sd, deliveryDate__lte=ed)
 
             gen_info["message"] = "For the month of " + m.strftime('%B') + " " + str(m.year)
             for r in report_data:
+                sl = 0
+                backloads = 0
+                deliveries = 0
                 r["end_inv"] = Product.get_end_inventory(Product.objects.get(idProduct=r["id"]), ed)
                 for d in deliv:
                     for del_prods in d.get_delivered_products:
                         if del_prods.product.idProduct == r["id"]:
+                            print(del_prods.product.idProduct)
                             deliveries += del_prods.qty
                 for s in si:
-                    for il in InvoiceLines.objects.filter(idSales=s, idProduct_id=r["id"]):
-                        sl += il.qty
+                    for il in InvoiceLines.objects.filter(idSales=s):
+                        if il.idProduct_id == r["id"]:
+                            sl += il.qty
                 for b in bload:
-                    for bl in BackloadLines.objects.filter(idBackload=b, idProduct_id=self.idProduct):
-                        backloads += bl.qty
+                    for bl in BackloadLines.objects.filter(idBackload=b):
+                        if bl.idProduct_id == r["id"]:
+                            backloads += bl.qty
 
                 r["beg_inv"] = (r["end_inv"] + sl + backloads) - deliveries
                 r["deliveries"] = deliveries
@@ -227,7 +230,7 @@ def inventory_report_detail(request):
                 r["sales"] = sl
     else:
         return redirect('inventory_report')
-    return render(request, 'salikneta/reports/inventory_report_detail.html',{"report_data":new_rd,"gen_info":gen_info})
+    return render(request, 'salikneta/reports/inventory_report_detail.html',{"report_data":report_data,"gen_info":gen_info})
 
 def editItemPrice(request):
     if request.method == 'POST':
