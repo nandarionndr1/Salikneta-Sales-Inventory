@@ -125,7 +125,9 @@
        for (i in obj){
 
        console.log(obj);
-               $("#notif_num").show().html(obj[i].num_notif);
+               if (obj[i].num_notif === 0){$("#notif_num").hide();}
+               else{
+               $("#notif_num").show().html(obj[i].num_notif);}
                item = '<li><a href="#">';
                item += obj[i].msg;
                item +='<br><span class="small italic">'+obj[i].timestamp+'</span></a></li>';

@@ -156,7 +156,7 @@ def inventory_report_detail(request):
         for p in products:
             report_data.append({"id":p.idProduct,
                                 "product": p.name,
-                                "uom":p.description,
+                                "uom":p.unitOfMeasure,
                                 "unit_price":p.suggestedUnitPrice,
                                 "beg_inv":0,
                                 "deliveries":0,
