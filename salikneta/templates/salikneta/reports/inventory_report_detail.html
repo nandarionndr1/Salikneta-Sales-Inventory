@@ -19,6 +19,9 @@
                 <div class="row">
                         <h4 class="mb"><i class="fa fa-angle-right"></i> Inventory Audit Report -</h4>
                         <h5>{{ gen_info.message }}</h5>
+                        <h5>Total Deliveries: {{ gen_info.total_deliveries }}</h5>
+                        <h5>Total Backloads: {{ gen_info.total_backloads }}</h5>
+                        <h5>Total Sales Count: {{ gen_info.total_sales_ct }}</h5>
                 </div>
             <style>
               .bdr{
@@ -86,7 +89,6 @@
         WindowObject.focus();
         WindowObject.print();
         WindowObject.close();
-
     }
     function show_modal_invoice(id,obj){
         $("#receipt_tbl").empty();

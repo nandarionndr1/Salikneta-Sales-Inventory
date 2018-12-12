@@ -151,7 +151,9 @@ def get_end_inv(ed,product_id):
 def inventory_report_detail(request):
     if request.method == 'POST':
         report_data = []
-        gen_info ={"message":""}
+        gen_info ={"message":"","total_sales_ct":0,
+                   "total_deliveries":0,
+                   "total_backloads":0,}
         products = Product.objects.all()
         for p in products:
             report_data.append({"id":p.idProduct,
@@ -182,12 +184,15 @@ def inventory_report_detail(request):
                     for del_prods in d.get_delivered_products:
                         if del_prods.product.idProduct == r["id"]:
                             deliveries += del_prods.qty
+                            gen_info["total_deliveries"] += del_prods.qty
                 for s in si:
                     for il in InvoiceLines.objects.filter(idSales=s, idProduct_id=r["id"]):
                         sl += il.qty
+                        gen_info["total_sales_ct"] += il.qty
                 for b in bload:
                     for bl in BackloadLines.objects.filter(idBackload=b, idProduct_id=r["id"]):
                         backloads += bl.qty
+                        gen_info["total_backloads"] += bl.qty
 
                 r["beg_inv"] = (r["end_inv"] + sl + backloads) - deliveries
                 r["deliveries"] = deliveries
@@ -213,16 +218,19 @@ def inventory_report_detail(request):
                 for d in deliv:
                     for del_prods in d.get_delivered_products:
                         if del_prods.product.idProduct == r["id"]:
-                            print(del_prods.product.idProduct)
                             deliveries += del_prods.qty
+                            gen_info["total_deliveries"] += del_prods.qty
+
                 for s in si:
                     for il in InvoiceLines.objects.filter(idSales=s):
                         if il.idProduct_id == r["id"]:
                             sl += il.qty
+                            gen_info["total_sales_ct"] += il.qty
                 for b in bload:
                     for bl in BackloadLines.objects.filter(idBackload=b):
                         if bl.idProduct_id == r["id"]:
                             backloads += bl.qty
+                        gen_info["total_backloads"] += bl.qty
 
                 r["beg_inv"] = (r["end_inv"] + sl + backloads) - deliveries
                 r["deliveries"] = deliveries

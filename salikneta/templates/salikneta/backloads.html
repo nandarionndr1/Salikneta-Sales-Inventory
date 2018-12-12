@@ -47,7 +47,8 @@
                                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                   <h4 class="modal-title" id="myModalLabel">VIEW BACKLOAD</h4>
                                 </div>
-                                <div class="modal-body">
+                                <div id="print_div_{{ b.pk }}" class="modal-body" >
+
                                    <div class="row">
                                    <div class="col-md-2"></div>
                                    		<div class="col-md-4">
@@ -84,8 +85,12 @@
 	                              </table>
 
                                 </div>
+                                </div>
                                 <div class="modal-footer">
+                                  <button type="button" class="btn btn-info" onclick="printDiv('print_div_{{ b.pk }}')">PRINT</button>
+
                                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
 
                                 </div>
                               </div>
@@ -163,6 +168,23 @@
   </section>
 </body>
 <script>
+    function printDiv(div) {
+        var printStr = "<script>"+"window.print();</"+"script>";
+        var printCont = document.getElementById(div);
+        var html = '<html><head>'+
+               '<title>BL_FORM</title>'+
+               '</head><body style="background:#ffffff;">'+
+               printCont.innerHTML+
+               '</body></html>'+printStr;
+        var WindowObject =window.open('',"Print Window",
+            "width=1000,height=1000,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
+        WindowObject.document.writeln(html);
+        WindowObject.document.close();
+        WindowObject.focus();
+        WindowObject.print();
+        WindowObject.close();
+
+    }
 	function itemObject(idProduct, productName, unitsInStock){
 		this.idProduct = idProduct;
 		this.productName = productName;
